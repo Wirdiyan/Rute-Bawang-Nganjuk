@@ -1,0 +1,171 @@
+{
+  "metadata": {
+    "source": "OpenStreetMap",
+    "data_attribution": "© OpenStreetMap contributors",
+    "data_license": "Open Database License (ODbL) 1.0",
+    "copyright_url": "https://www.openstreetmap.org/copyright",
+    "geocoder": "Nominatim via OSMnx",
+    "network_type": "drive",
+    "extracted_at_utc": "2026-10-28T05:46:02+00:00",
+    "bbox_west_south_east_north": [
+      111.8210553,
+      -7.7676995,
+      112.0228513,
+      -7.4477014
+    ],
+    "osmnx_version": "2.1.1",
+    "networkx_version": "3.7",
+    "node_count": 19687,
+    "edge_count": 48491,
+    "graph_type": "directed MultiDiGraph",
+    "simplified": true,
+    "oneway_preserved": true,
+    "validation": {
+      "node_coordinates_present": true,
+      "edge_length_valid": true,
+      "edge_length_unit": "meters",
+      "weakly_connected_component_count": 9,
+      "target_nodes_share_weak_component": true,
+      "directed_reachable_target_pairs": 12,
+      "directed_target_pair_count": 12,
+      "unreachable_directed_pairs": [],
+      "warnings": []
+    }
+  },
+  "warehouse": {
+    "name": "Sukomoro",
+    "query": "Sukomoro, Kabupaten Nganjuk, Jawa Timur, Indonesia",
+    "latitude": -7.6024234,
+    "longitude": 111.9428513,
+    "display_name": "Sukomoro, Nganjuk, East Java, 64419, Indonesia",
+    "osm_type": "node",
+    "osm_id": 1308675576,
+    "place_class": "place",
+    "place_type": "town",
+    "importance": 0.16004000076295108,
+    "selected_result_number": 2,
+    "geocoding_candidates": [
+      {
+        "result_number": 1,
+        "display_name": "Sukomoro, Jalan Raya Nganjuk - Kertosono, Templek, Sukomoro, Nganjuk, East Java, 64481, Indonesia",
+        "latitude": -7.6027016,
+        "longitude": 111.9424005,
+        "osm_type": "node",
+        "osm_id": 1347469907,
+        "place_class": "railway",
+        "place_type": "station",
+        "selected": false
+      },
+      {
+        "result_number": 2,
+        "display_name": "Sukomoro, Nganjuk, East Java, 64419, Indonesia",
+        "latitude": -7.6024234,
+        "longitude": 111.9428513,
+        "osm_type": "node",
+        "osm_id": 1308675576,
+        "place_class": "place",
+        "place_type": "town",
+        "selected": true
+      }
+    ],
+    "source": "OpenStreetMap Nominatim via OSMnx",
+    "nearest_node": 3359285910
+  },
+  "destinations": [
+    {
+      "name": "Nganjuk",
+      "query": "Nganjuk, Kabupaten Nganjuk, Jawa Timur, Indonesia",
+      "latitude": -7.6023595,
+      "longitude": 111.9010553,
+      "display_name": "Nganjuk, East Java, 64414, Indonesia",
+      "osm_type": "node",
+      "osm_id": 2546462080,
+      "place_class": "place",
+      "place_type": "city",
+      "importance": 0.31298735030903774,
+      "selected_result_number": 2,
+      "geocoding_candidates": [
+        {
+          "result_number": 1,
+          "display_name": "Nganjuk, Jalan Diponegoro II, Nganjuk, East Java, 64414, Indonesia",
+          "latitude": -7.600335,
+          "longitude": 111.9027186,
+          "osm_type": "node",
+          "osm_id": 1347469906,
+          "place_class": "railway",
+          "place_type": "station",
+          "selected": false
+        },
+        {
+          "result_number": 2,
+          "display_name": "Nganjuk, East Java, 64414, Indonesia",
+          "latitude": -7.6023595,
+          "longitude": 111.9010553,
+          "osm_type": "node",
+          "osm_id": 2546462080,
+          "place_class": "place",
+          "place_type": "city",
+          "selected": true
+        }
+      ],
+      "source": "OpenStreetMap Nominatim via OSMnx",
+      "nearest_node": 3836544690
+    },
+    {
+      "name": "Rejoso",
+      "query": "Rejoso, Kabupaten Nganjuk, Jawa Timur, Indonesia",
+      "latitude": -7.5277014,
+      "longitude": 111.9045653,
+      "display_name": "Rejoso, Nganjuk, East Java, 63131, Indonesia",
+      "osm_type": "node",
+      "osm_id": 1308647632,
+      "place_class": "place",
+      "place_type": "village",
+      "importance": 0.14670416800183103,
+      "selected_result_number": 1,
+      "geocoding_candidates": [
+        {
+          "result_number": 1,
+          "display_name": "Rejoso, Nganjuk, East Java, 63131, Indonesia",
+          "latitude": -7.5277014,
+          "longitude": 111.9045653,
+          "osm_type": "node",
+          "osm_id": 1308647632,
+          "place_class": "place",
+          "place_type": "village",
+          "selected": true
+        }
+      ],
+      "source": "OpenStreetMap Nominatim via OSMnx",
+      "nearest_node": 6331019180
+    },
+    {
+      "name": "Gondang",
+      "query": "Gondang, Kabupaten Nganjuk, Jawa Timur, Indonesia",
+      "latitude": -7.6876995,
+      "longitude": 111.9162959,
+      "display_name": "Gondang, Nganjuk, East Java, 64472, Indonesia",
+      "osm_type": "node",
+      "osm_id": 1308679614,
+      "place_class": "place",
+      "place_type": "village",
+      "importance": 0.14670666742961772,
+      "selected_result_number": 1,
+      "geocoding_candidates": [
+        {
+          "result_number": 1,
+          "display_name": "Gondang, Nganjuk, East Java, 64472, Indonesia",
+          "latitude": -7.6876995,
+          "longitude": 111.9162959,
+          "osm_type": "node",
+          "osm_id": 1308679614,
+          "place_class": "place",
+          "place_type": "village",
+          "selected": true
+        }
+      ],
+      "source": "OpenStreetMap Nominatim via OSMnx",
+      "nearest_node": 6794469099
+    }
+  ]
+}
