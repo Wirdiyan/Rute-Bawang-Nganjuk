@@ -71,3 +71,32 @@ python backend/scripts/test_astar.py
 
 This tests Sukomoro → Nganjuk, Sukomoro → Rejoso, and Sukomoro → Gondang.
 No A* algorithm is used to order multiple destinations (TSP).
+
+## Multi-Destination Route Optimization
+
+`algorithms/route_optimizer.py` uses the existing custom A* implementation to
+compute a directed distance matrix for every ordered pair among Sukomoro,
+Nganjuk, Rejoso, and Gondang. Both directions are calculated because the OSM
+drive graph preserves one-way roads, so a route from A to B can differ from B
+to A. Each A* path and search trace is cached once per ordered pair and reused
+while evaluating route orders.
+
+With three required destinations there are `3! = 6` visit orders. The optimizer
+enumerates all six using `itertools.permutations`, sums the four directed A*
+leg distances for each round trip, and selects the smallest total. Exact ties
+are resolved lexicographically by destination names for deterministic output.
+The selected leg paths are concatenated while omitting the repeated junction
+node at each boundary. The output retains all six alternatives and all 12
+directed pair paths/traces for later visualization.
+
+Run the standalone optimizer from the project root:
+
+```powershell
+python backend/scripts/test_route_optimizer.py
+```
+
+The script validates the route, writes the actual matrix/candidates/legs and
+cached A* traces to `outputs/route_optimization.json`, and prints a readable
+summary. A* remains the road-graph search algorithm; exhaustive permutation
+evaluation only chooses the visit order. FastAPI and frontend integration are
+not part of this stage.
