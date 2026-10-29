@@ -8,7 +8,8 @@ the results under `backend/outputs/`.
 Data source attribution: © OpenStreetMap contributors, Open Database License
 (ODbL) 1.0. See https://www.openstreetmap.org/copyright.
 
-It does **not** implement A*, shortest-path search, TSP, or route ordering.
+The standalone custom A* implementation is documented below. It does not
+implement TSP or multi-destination route ordering.
 
 ## Run
 
@@ -38,3 +39,35 @@ For ambiguous names, the script prints the returned candidates and selects an
 OSM settlement (`place=city/town/village/...`) before considering an
 administrative boundary. Transport features such as similarly named railway
 stations are not selected as localities.
+
+## A* Algorithm
+
+`algorithms/astar.py` runs custom A* on `outputs/road_network.graphml`, loaded
+as a directed NetworkX `MultiDiGraph`. `scripts/test_astar.py` gets the
+Sukomoro start node and each destination node from `outputs/locations.json`;
+it does not geocode or select nodes manually.
+
+- `g(n)` is the accumulated road-edge `length` in meters.
+- `h(n)` is Haversine great-circle distance from the node's OSM `y`/`x`
+  coordinates to the goal, in meters. Straight-line distance is an admissible
+  lower bound for road distance, so it can guide search without overestimating
+  the remaining route cost.
+- `f(n) = g(n) + h(n)`; Python's `heapq` priority queue expands the lowest
+  `f(n)` first.
+- Directed edges are preserved. If parallel directed edges connect the same
+  pair of nodes, the search uses the smallest positive `length` among them.
+- Parent links reconstruct the final start-to-goal path. The result includes
+  distance, evaluated-node records (`step`, `node`, `parent`, `g`, `h`, `f`,
+  `status`), and OPEN/CLOSED node lists for later visualization.
+- The script checks the reconstructed distance from graph edge lengths and
+  compares the result with NetworkX weighted shortest-path distance as a
+  reference only. NetworkX is not used to implement the A* result.
+
+Run all three single-pair checks from the project root:
+
+```powershell
+python backend/scripts/test_astar.py
+```
+
+This tests Sukomoro → Nganjuk, Sukomoro → Rejoso, and Sukomoro → Gondang.
+No A* algorithm is used to order multiple destinations (TSP).
