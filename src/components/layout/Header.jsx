@@ -1,6 +1,6 @@
 import Icon from '../common/Icon.jsx';
 
-export default function Header({ activeTab, onNavigate, menuOpen, onToggleMenu }) {
+export default function Header({ activeTab, onNavigate, menuOpen, onToggleMenu, apiStatus = 'checking' }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', target: 'top' },
     { id: 'analysis', label: 'Route Analysis', target: 'route-analysis' },
@@ -19,7 +19,7 @@ export default function Header({ activeTab, onNavigate, menuOpen, onToggleMenu }
         {navItems.map((item) => <button key={item.id} className={`nav-link ${activeTab === item.id ? 'active' : ''}`} onClick={() => onNavigate(item.id, item.target)}>{item.label}</button>)}
       </nav>
       <div className="header-actions">
-        <div className="session-pill"><span className="live-dot"/><span>Algorithm Ready</span><span className="session-separator">|</span><small>NGK-SESSION #25</small></div>
+        <div className={`session-pill api-session ${apiStatus}`} title={`Backend status: ${apiStatus}`}><span className="live-dot"/><span>{apiStatus === 'connected' ? 'Backend Connected' : apiStatus === 'offline' ? 'Backend Offline' : 'Connecting API…'}</span></div>
         <button className="profile-button" aria-label="Profil pengguna"><Icon name="user" size={17} /></button>
       </div>
     </div>
