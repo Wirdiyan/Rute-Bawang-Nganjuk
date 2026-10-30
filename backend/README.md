@@ -98,5 +98,46 @@ python backend/scripts/test_route_optimizer.py
 The script validates the route, writes the actual matrix/candidates/legs and
 cached A* traces to `outputs/route_optimization.json`, and prints a readable
 summary. A* remains the road-graph search algorithm; exhaustive permutation
-evaluation only chooses the visit order. FastAPI and frontend integration are
-not part of this stage.
+evaluation only chooses the visit order. The FastAPI layer is documented in
+the next section; frontend integration is still pending.
+
+## FastAPI Backend
+
+The FastAPI layer serves the generated location and optimizer outputs without
+re-running A* or route-order evaluation on each request. The A* endpoint reads
+the actual custom A* pair result and its search trace saved by the optimizer.
+
+Run the backend from the project root:
+
+```powershell
+uvicorn backend.api.main:app --reload
+```
+
+Available endpoints:
+
+- `GET /api/health`
+- `GET /api/locations`
+- `GET /api/route/optimize`
+- `GET /api/route/optimal`
+- `GET /api/routes/alternatives`
+- `GET /api/astar?from=Sukomoro&to=Gondang`
+
+Swagger UI is available at `http://localhost:8000/docs`; ReDoc is at
+`http://localhost:8000/redoc`. CORS allows the local Vite origins
+`http://localhost:5173` and `http://127.0.0.1:5173` for GET requests.
+
+Architecture:
+
+```text
+React (not integrated yet) → HTTP → FastAPI → route_optimizer.py
+                                      → cached custom A* output
+                                      → NetworkX OSM Graph
+```
+
+Validate the API without a browser:
+
+```powershell
+python backend/scripts/test_api.py
+```
+
+React frontend integration is intentionally not implemented in this step.
