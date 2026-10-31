@@ -85,7 +85,7 @@ export default function Dashboard() {
       <section className="page-intro"><div><div className="intro-kicker"><span>LIVE API DATA</span><small>Graf Jaringan Jalan Riil Kab. Nganjuk</small></div><h1>Workbench Optimasi Distribusi Bawang Merah</h1></div><div className="intro-actions"><div className="solver-chip"><Icon name="filter" size={14}/><span>Optimasi Rute: <b>Custom A* + Evaluasi 6 Urutan</b></span></div><button className="reset-button" onClick={refresh} disabled={loading || refreshing}><Icon name="refresh" size={13}/> {refreshing ? 'Memuat…' : 'Muat Ulang Data'}</button></div></section>
       {error && <div className="api-error" role="alert"><Icon name="info" size={16}/><div><strong>Data backend tidak tersedia</strong><span>{error}</span></div><button onClick={refresh} disabled={refreshing}>Coba lagi</button></div>}
       {loading && <div className="api-loading" role="status"><span className="spinner dark-spinner"/> Menghubungkan ke FastAPI dan memuat hasil optimasi…</div>}
-      <section className="workbench-grid"><RouteConfiguration locations={data?.locations} onOptimize={refresh} optimizing={refreshing} resultReady={resultReady}/><RouteMap locations={data?.locations} optimal={data?.optimal}/></section>
+      <section className="workbench-grid"><RouteConfiguration locations={data?.locations} onOptimize={refresh} optimizing={refreshing} resultReady={resultReady}/><RouteMap locations={data?.locations} optimal={data?.optimal} loading={loading} error={error}/></section>
       <RouteSummary stats={stats}/>
       <div className="detail-grid">
         <div className="detail-column"><RoutePlan stops={stops}/><AlternativeRoutes routes={alternativeRows} count={data?.alternatives?.count ?? 0}/><WhyOptimal explanation={explanation}/></div>

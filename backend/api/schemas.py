@@ -56,12 +56,18 @@ class OptimizationResponse(BaseModel):
     candidates: list[CandidateRoute]
 
 
+class RouteCoordinate(BaseModel):
+    latitude: float
+    longitude: float
+
+
 class OptimalRouteResponse(BaseModel):
     route: list[str]
     total_distance_m: float
     total_distance_km: float
     legs: list[Leg]
     combined_path: list[int]
+    path_coordinates: list[RouteCoordinate]
 
 
 class SearchStep(BaseModel):

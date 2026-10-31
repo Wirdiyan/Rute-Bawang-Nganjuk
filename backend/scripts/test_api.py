@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -65,6 +66,16 @@ def main() -> int:
     check(optimal["route"][0] == "Sukomoro" and optimal["route"][-1] == "Sukomoro", "Optimal route does not return to warehouse")
     check(optimal["route"] == optimization["optimal_route"], "Optimal route endpoint differs from optimizer output")
     check(optimal["combined_path"] == optimization["combined_path"], "Combined path differs from optimizer output")
+    path_coordinates = optimal["path_coordinates"]
+    check(len(path_coordinates) >= len(optimal["combined_path"]), "Route geometry omits one or more A* graph nodes")
+    check(len(path_coordinates) > len(optimal["route"]), "Route geometry does not contain road-level detail")
+    check(all(
+        math.isfinite(point["latitude"])
+        and math.isfinite(point["longitude"])
+        and -90 <= point["latitude"] <= 90
+        and -180 <= point["longitude"] <= 180
+        for point in path_coordinates
+    ), "Route geometry contains invalid coordinates")
     print("Optimal Route API          PASS")
 
     response = client.get("/api/routes/alternatives")

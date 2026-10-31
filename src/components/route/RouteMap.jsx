@@ -1,54 +1,116 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import L from 'leaflet';
+import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import Icon from '../common/Icon.jsx';
 
-const destinationSlots = [
-  { x: 20, y: 66, labelX: 9, labelY: 72, anchor: 'start' },
-  { x: 34, y: 31, labelX: 34, labelY: 20, anchor: 'middle' },
-  { x: 76, y: 45, labelX: 80, labelY: 52, anchor: 'start' },
-];
-const warehousePoint = { x: 48, y: 52 };
+const warehouseIcon = L.divIcon({
+  className: 'route-marker-shell',
+  html: '<span class="route-marker warehouse-marker">W</span>',
+  iconSize: [32, 40],
+  iconAnchor: [16, 38],
+  popupAnchor: [0, -34],
+});
+const destinationIcon = L.divIcon({
+  className: 'route-marker-shell',
+  html: '<span class="route-marker map-destination-marker">D</span>',
+  iconSize: [30, 38],
+  iconAnchor: [15, 36],
+  popupAnchor: [0, -32],
+});
 
-export default function RouteMap({ locations, optimal }) {
-  const [zoom, setZoom] = useState(1);
+function FitMapToData({ boundsPoints }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!boundsPoints.length) return undefined;
+    const frame = window.requestAnimationFrame(() => {
+      map.invalidateSize();
+      const bounds = L.latLngBounds(boundsPoints);
+      if (bounds.isValid()) map.fitBounds(bounds, { padding: [36, 36], maxZoom: 14 });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [map, boundsPoints]);
+  return null;
+}
+
+function MapControls({ boundsPoints }) {
+  const map = useMap();
+  const fitRoute = () => {
+    if (!boundsPoints.length) return;
+    const bounds = L.latLngBounds(boundsPoints);
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [36, 36], maxZoom: 14 });
+  };
+  return <div className="map-zoom" aria-label="Kontrol peta">
+    <button onClick={() => map.zoomIn()} aria-label="Perbesar peta"><Icon name="plus" size={16}/></button>
+    <button onClick={() => map.zoomOut()} aria-label="Perkecil peta"><Icon name="minus" size={16}/></button>
+    <button onClick={fitRoute} aria-label="Tampilkan seluruh rute"><Icon name="target" size={15}/></button>
+  </div>;
+}
+
+function MapLoading({ error }) {
+  return <div className={`map-state ${error ? 'error' : ''}`} role={error ? 'alert' : 'status'}>
+    {error ? 'Unable to load route map data.' : <><span className="spinner dark-spinner"/> Memuat data peta…</>}
+  </div>;
+}
+
+export default function RouteMap({ locations, optimal, loading = false, error = '' }) {
+  const [mapReady, setMapReady] = useState(false);
   const warehouse = locations?.warehouse;
-  const destinationPoints = (locations?.destinations ?? []).map((location, index) => ({
-    ...location,
-    number: String(index + 1),
-    ...(destinationSlots[index] ?? { x: 12 + (index % 5) * 17, y: 15 + (index % 3) * 27, labelX: 12 + (index % 5) * 17, labelY: 12 + (index % 3) * 27, anchor: 'middle' }),
-  }));
-  const pointByName = useMemo(() => Object.fromEntries([
-    ...(warehouse ? [[warehouse.name, warehousePoint]] : []),
-    ...destinationPoints.map((point) => [point.name, point]),
-  ]), [warehouse?.name, locations]);
-  const routePoints = (optimal?.route ?? []).map((name) => pointByName[name]).filter(Boolean);
-  const polyline = routePoints.map((point) => `${point.x},${point.y}`).join(' ');
-  const distanceChips = (optimal?.legs ?? []).map((leg, index) => {
-    const from = pointByName[leg.from];
-    const to = pointByName[leg.to];
-    if (!from || !to) return null;
-    const offsetY = index % 2 === 0 ? -2 : 2;
-    return {
-      key: `${leg.from}-${leg.to}`,
-      x: (from.x + to.x) / 2 - 5.5,
-      y: (from.y + to.y) / 2 + offsetY,
-      label: (leg.distance_m / 1000).toFixed(1),
-    };
-  });
+  const destinations = locations?.destinations ?? [];
+  const routeCoordinates = useMemo(
+    () => (optimal?.path_coordinates ?? [])
+      .filter((point) => Number.isFinite(point.latitude) && Number.isFinite(point.longitude))
+      .map((point) => [point.latitude, point.longitude]),
+    [optimal?.path_coordinates],
+  );
+  const locationPoints = useMemo(() => [
+    ...(warehouse ? [[warehouse.latitude, warehouse.longitude]] : []),
+    ...destinations.map((destination) => [destination.latitude, destination.longitude]),
+  ].filter(([latitude, longitude]) => Number.isFinite(latitude) && Number.isFinite(longitude)), [warehouse, destinations]);
+  const boundsPoints = useMemo(() => [...routeCoordinates, ...locationPoints], [routeCoordinates, locationPoints]);
+  const initialCenter = warehouse ? [warehouse.latitude, warehouse.longitude] : null;
+  const mapError = Boolean(error) && !locations;
 
-  return <section className="map-card" aria-label="Skema urutan rute" data-route-node-count={optimal?.combined_path?.length ?? 0}>
+  return <section className="map-card" aria-label="Peta rute OpenStreetMap" data-route-node-count={optimal?.combined_path?.length ?? 0}>
     <div className="map-canvas">
-      <div className="map-waterway"/><div className="map-park park-one"/><div className="map-park park-two"/><div className="map-park park-three"/>
-      <svg className="map-art" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style={{ transform: `scale(${zoom})` }}>
-        <g className="road-network"><path d="M3 20 18 30 34 20 48 26 62 12 84 25 97 20M4 48 18 39 33 48 50 35 65 43 80 34 97 42M2 80 20 72 35 82 48 68 64 74 78 62 96 66M16 7 21 35 18 60 25 90M42 6 40 27 46 48 40 69 44 94M69 6 65 31 71 51 67 80 75 96M89 7 82 33 87 55 80 83"/><path d="M9 14 26 27 45 22 60 32 78 27 91 37M8 57 27 64 40 56 58 65 75 56 94 60"/></g>
-        {polyline && <polyline className="route-main" points={polyline}/>}
-        {destinationPoints.map((node) => <g key={node.name}><circle className="route-node-halo" cx={node.x} cy={node.y} r="2.8"/><circle className="route-node" cx={node.x} cy={node.y} r="2.15"/><text className="route-node-number" x={node.x} y={node.y + .65}>{node.number}</text><text className="map-node-title" x={node.labelX} y={node.labelY} textAnchor={node.anchor}>{node.name}</text><text className="map-node-subtitle" x={node.labelX} y={node.labelY + 3} textAnchor={node.anchor}>{`Tujuan ${node.number}`}</text></g>)}
-        {warehouse && <g className="depot-node" transform={`translate(${warehousePoint.x} ${warehousePoint.y})`}><circle r="3.1"/><circle r="2.2"/><path d="M-1.2.6h2.4v-2L0-2.3l-1.2.9z"/><text x="1" y="7.7" className="depot-label">Gudang {warehouse.name}</text><text x="1" y="10.1" className="depot-subtitle">Depot Utama • Start/Finish</text></g>}
-        {distanceChips.filter(Boolean).map((chip) => <g className="distance-chip" transform={`translate(${chip.x} ${chip.y})`} key={chip.key}><rect width="11" height="3.3" rx="1.4"/><text x="5.5" y="2.2" textAnchor="middle">{chip.label}</text></g>)}
-      </svg>
-      <div className="map-location"><span className="live-dot"/>{warehouse ? `Kabupaten Nganjuk [${warehouse.longitude.toFixed(3)}°, ${warehouse.latitude.toFixed(3)}°]` : 'Lokasi menunggu data API'}</div>
-      <div className="map-zoom"><button onClick={() => setZoom((value) => Math.min(1.24, value + .08))} aria-label="Perbesar peta"><Icon name="plus" size={16}/></button><button onClick={() => setZoom((value) => Math.max(.88, value - .08))} aria-label="Perkecil peta"><Icon name="minus" size={16}/></button><button onClick={() => setZoom(1)} aria-label="Atur ulang peta"><Icon name="target" size={15}/></button></div>
-      <div className="map-total"><Icon name="route" size={15}/><strong>{optimal ? `${(optimal.total_distance_m / 1000).toFixed(3)} km Total` : 'Rute belum tersedia'}</strong><span/>Skema urutan kunjungan</div>
-      <div className="map-legend"><strong>LEGENDA VISUALISASI</strong><div><i className="legend-depot"/>Gudang {warehouse?.name ?? 'Depot'}</div><div><i className="legend-destination"/>Titik distribusi dari API</div><div><i className="legend-route"/>Urutan rute optimal</div><small>Skema placeholder, bukan geometri jalan</small></div>
+      {initialCenter ? <MapContainer
+        center={initialCenter}
+        zoom={11}
+        scrollWheelZoom
+        zoomControl={false}
+        className="route-leaflet-map"
+        whenReady={() => setMapReady(true)}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
+        />
+        <FitMapToData boundsPoints={boundsPoints}/>
+        <MapControls boundsPoints={boundsPoints}/>
+        {warehouse && <Marker position={[warehouse.latitude, warehouse.longitude]} icon={warehouseIcon}>
+          <Popup><strong>{warehouse.name}</strong><br/>Warehouse • titik awal dan kembali</Popup>
+        </Marker>}
+        {destinations.map((destination, index) => <Marker
+          key={destination.name}
+          position={[destination.latitude, destination.longitude]}
+          icon={destinationIcon}
+        >
+          <Popup><strong>{destination.name}</strong><br/>Destination • tujuan distribusi #{index + 1}</Popup>
+        </Marker>)}
+        {routeCoordinates.length > 1 && <Polyline
+          positions={routeCoordinates}
+          pathOptions={{ color: '#15803d', weight: 5, opacity: 0.92, lineCap: 'round', lineJoin: 'round' }}
+        />}
+      </MapContainer> : <MapLoading error={mapError || (!loading && Boolean(error))}/>}
+
+      {initialCenter && <>
+        <div className="map-location"><span className="live-dot"/>{`Kabupaten Nganjuk [${warehouse.longitude.toFixed(3)}°, ${warehouse.latitude.toFixed(3)}°]`}</div>
+        <div className="map-total"><Icon name="route" size={15}/><strong>{optimal ? `${(optimal.total_distance_m / 1000).toFixed(3)} km Total` : 'Rute belum tersedia'}</strong><span/>{optimal?.path_coordinates?.length ? 'Geometry jalan OSM' : 'Menunggu geometry rute'}</div>
+        <div className="map-legend"><strong>LEGENDA PETA</strong><div><i className="legend-depot"/>Warehouse</div><div><i className="legend-destination"/>Destination</div><div><i className="legend-route"/>Rute optimal • OSM</div></div>
+        {optimal && optimal.path_coordinates?.length < 2 && <div className="map-geometry-error" role="alert">Geometry rute belum tersedia dari backend.</div>}
+      </>}
+      {!mapReady && initialCenter && <div className="map-init-status" role="status">Memuat OpenStreetMap…</div>}
     </div>
   </section>;
 }

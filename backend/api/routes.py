@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import json
+import csv
+import math
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
+from shapely import wkt
 
 from .schemas import (
     AStarResponse,
@@ -18,6 +22,7 @@ from .schemas import (
     Location,
     OptimalRouteResponse,
     OptimizationResponse,
+    RouteCoordinate,
 )
 
 router = APIRouter(prefix="/api")
@@ -25,6 +30,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = PROJECT_ROOT / "backend" / "outputs"
 LOCATIONS_PATH = OUTPUT_DIR / "locations.json"
 OPTIMIZATION_PATH = OUTPUT_DIR / "route_optimization.json"
+NODES_PATH = OUTPUT_DIR / "nodes.csv"
+EDGES_PATH = OUTPUT_DIR / "edges.csv"
 API_VERSION = "1.0.0"
 SERVICE_NAME = "RouteBawang AI API"
 
@@ -61,6 +68,92 @@ def _location_response(raw: dict[str, Any]) -> Location:
 
 def _optimization_data() -> dict[str, Any]:
     return _read_json(OPTIMIZATION_PATH, "Route optimization output")
+
+
+@lru_cache(maxsize=1)
+def _node_coordinates() -> dict[int, tuple[float, float]]:
+    """Load graph node coordinates from the generated OSM nodes table once."""
+    if not NODES_PATH.is_file():
+        raise HTTPException(status_code=500, detail=f"OSM node coordinates file is missing: {NODES_PATH}")
+    coordinates: dict[int, tuple[float, float]] = {}
+    try:
+        with NODES_PATH.open("r", encoding="utf-8", newline="") as file:
+            for row in csv.DictReader(file):
+                node = int(row["node_id"])
+                latitude = float(row["latitude"])
+                longitude = float(row["longitude"])
+                if math.isfinite(latitude) and math.isfinite(longitude):
+                    coordinates[node] = (latitude, longitude)
+    except (OSError, KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(status_code=500, detail=f"Unable to read OSM node coordinates: {exc}") from exc
+    return coordinates
+
+
+@lru_cache(maxsize=8)
+def _path_coordinates(path: tuple[int, ...]) -> tuple[tuple[float, float], ...]:
+    """Expand an A* node sequence into OSM edge geometry points in route order."""
+    node_coords = _node_coordinates()
+    missing = [node for node in path if node not in node_coords]
+    if missing:
+        raise HTTPException(status_code=500, detail=f"OSM coordinates are missing for route node(s): {missing[:5]}")
+    if not path:
+        return ()
+
+    required_pairs = set(zip(path, path[1:]))
+    selected_edges: dict[tuple[int, int], tuple[float, str]] = {}
+    if required_pairs:
+        if not EDGES_PATH.is_file():
+            raise HTTPException(status_code=500, detail=f"OSM edge data file is missing: {EDGES_PATH}")
+        try:
+            with EDGES_PATH.open("r", encoding="utf-8", newline="") as file:
+                for row in csv.DictReader(file):
+                    pair = (int(row["source"]), int(row["target"]))
+                    if pair not in required_pairs:
+                        continue
+                    length = float(row["length"])
+                    current = selected_edges.get(pair)
+                    if current is None or length < current[0]:
+                        selected_edges[pair] = (length, row.get("geometry") or "")
+        except (OSError, KeyError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=500, detail=f"Unable to read OSM edge geometry: {exc}") from exc
+
+    points: list[tuple[float, float]] = []
+
+    def append_point(latitude: float, longitude: float) -> None:
+        point = (latitude, longitude)
+        if not points or abs(points[-1][0] - latitude) > 1e-10 or abs(points[-1][1] - longitude) > 1e-10:
+            points.append(point)
+
+    for source, target in zip(path, path[1:]):
+        source_latlon = node_coords[source]
+        target_latlon = node_coords[target]
+        edge = selected_edges.get((source, target))
+        geometry_coords: list[tuple[float, float]] = []
+        if edge and edge[1]:
+            try:
+                geometry = wkt.loads(edge[1])
+                if geometry.geom_type == "LineString":
+                    geometry_coords = [(float(lat), float(lon)) for lon, lat, *_ in geometry.coords]
+            except (TypeError, ValueError) as exc:
+                raise HTTPException(status_code=500, detail=f"Invalid OSM geometry for edge {source}->{target}: {exc}") from exc
+
+        if geometry_coords:
+            # OSM edge geometry is normally stored source→target. Reverse only
+            # if endpoint coordinates show it was serialized in the opposite direction.
+            direct_error = abs(geometry_coords[0][0] - source_latlon[0]) + abs(geometry_coords[0][1] - source_latlon[1])
+            reverse_error = abs(geometry_coords[-1][0] - source_latlon[0]) + abs(geometry_coords[-1][1] - source_latlon[1])
+            if reverse_error < direct_error:
+                geometry_coords.reverse()
+            for latitude, longitude in geometry_coords:
+                append_point(latitude, longitude)
+            append_point(*target_latlon)
+        else:
+            append_point(*source_latlon)
+            append_point(*target_latlon)
+
+    if len(path) == 1:
+        append_point(*node_coords[path[0]])
+    return tuple(points)
 
 
 def _leg_response(raw: dict[str, Any]) -> Leg:
@@ -152,6 +245,10 @@ def get_optimal_route() -> OptimalRouteResponse:
             total_distance_km=data["total_distance_m"] / 1000,
             legs=[_leg_response(leg) for leg in data["legs"]],
             combined_path=data["combined_path"],
+            path_coordinates=[
+                RouteCoordinate(latitude=latitude, longitude=longitude)
+                for latitude, longitude in _path_coordinates(tuple(data["combined_path"]))
+            ],
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=f"Optimal route output has an invalid structure: {exc}") from exc

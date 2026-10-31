@@ -2657,7 +2657,7 @@
       "to": "Nganjuk",
       "start_node": 3359285910,
       "goal_node": 3836544690,
-      "execution_time_ms": 70.42260002344847
+      "execution_time_ms": 64.88950015045702
     },
     "Sukomoro->Rejoso": {
       "path": [
@@ -17445,7 +17445,7 @@
       "to": "Rejoso",
       "start_node": 3359285910,
       "goal_node": 6331019180,
-      "execution_time_ms": 88.05699995718896
+      "execution_time_ms": 62.459800159558654
     },
     "Sukomoro->Gondang": {
       "path": [
@@ -20808,7 +20808,7 @@
       "to": "Gondang",
       "start_node": 3359285910,
       "goal_node": 6794469099,
-      "execution_time_ms": 72.12069979868829
+      "execution_time_ms": 57.352300034835935
     },
     "Nganjuk->Sukomoro": {
       "path": [
@@ -22596,7 +22596,7 @@
       "to": "Sukomoro",
       "start_node": 3836544690,
       "goal_node": 3359285910,
-      "execution_time_ms": 77.08670012652874
+      "execution_time_ms": 56.84909992851317
     },
     "Nganjuk->Rejoso": {
       "path": [
@@ -40521,7 +40521,7 @@
       "to": "Rejoso",
       "start_node": 3836544690,
       "goal_node": 6331019180,
-      "execution_time_ms": 99.33290001936257
+      "execution_time_ms": 67.97309988178313
     },
     "Nganjuk->Gondang": {
       "path": [
@@ -59034,7 +59034,7 @@
       "to": "Gondang",
       "start_node": 3836544690,
       "goal_node": 6794469099,
-      "execution_time_ms": 112.63450002297759
+      "execution_time_ms": 78.13280005939305
     },
     "Rejoso->Sukomoro": {
       "path": [
@@ -70454,7 +70454,7 @@
       "to": "Sukomoro",
       "start_node": 6331019180,
       "goal_node": 3359285910,
-      "execution_time_ms": 105.8217000681907
+      "execution_time_ms": 68.27279995195568
     },
     "Rejoso->Nganjuk": {
       "path": [
@@ -81849,7 +81849,7 @@
       "to": "Nganjuk",
       "start_node": 6331019180,
       "goal_node": 3836544690,
-      "execution_time_ms": 85.57739993557334
+      "execution_time_ms": 65.44600008055568
     },
     "Rejoso->Gondang": {
       "path": [
@@ -122009,7 +122009,7 @@
       "to": "Gondang",
       "start_node": 6331019180,
       "goal_node": 6794469099,
-      "execution_time_ms": 105.24570010602474
+      "execution_time_ms": 75.09669987484813
     },
     "Gondang->Sukomoro": {
       "path": [
@@ -126812,7 +126812,7 @@
       "to": "Sukomoro",
       "start_node": 6794469099,
       "goal_node": 3359285910,
-      "execution_time_ms": 72.1295999828726
+      "execution_time_ms": 48.37810015305877
     },
     "Gondang->Nganjuk": {
       "path": [
@@ -138468,7 +138468,7 @@
       "to": "Nganjuk",
       "start_node": 6794469099,
       "goal_node": 3836544690,
-      "execution_time_ms": 81.29099989309907
+      "execution_time_ms": 52.735199918970466
     },
     "Gondang->Rejoso": {
       "path": [
@@ -189276,7 +189276,7 @@
       "to": "Rejoso",
       "start_node": 6794469099,
       "goal_node": 6331019180,
-      "execution_time_ms": 132.4213999323547
+      "execution_time_ms": 84.1767000965774
     }
   },
   "optimal_route": [
@@ -192649,7 +192649,7 @@
       "to": "Gondang",
       "start_node": 3359285910,
       "goal_node": 6794469099,
-      "execution_time_ms": 72.12069979868829
+      "execution_time_ms": 57.352300034835935
     },
     {
       "path": [
@@ -204305,7 +204305,7 @@
       "to": "Nganjuk",
       "start_node": 6794469099,
       "goal_node": 3836544690,
-      "execution_time_ms": 81.29099989309907
+      "execution_time_ms": 52.735199918970466
     },
     {
       "path": [
@@ -222230,7 +222230,7 @@
       "to": "Rejoso",
       "start_node": 3836544690,
       "goal_node": 6331019180,
-      "execution_time_ms": 99.33290001936257
+      "execution_time_ms": 67.97309988178313
     },
     {
       "path": [
@@ -233650,7 +233650,7 @@
       "to": "Sukomoro",
       "start_node": 6331019180,
       "goal_node": 3359285910,
-      "execution_time_ms": 105.8217000681907
+      "execution_time_ms": 68.27279995195568
     }
   ],
   "combined_path": [
