@@ -1,0 +1,1010 @@
+{
+  "source": "OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "fetched_at_utc": "2026-11-01T14:39:31.138961+00:00",
+  "osm_timestamp": "2026-11-01T14:37:32Z",
+  "query": "[out:json][timeout:25];node[\"place\"~\"^(village|hamlet|suburb|town)$\"](-7.66,111.84,-7.49,111.995);out body;",
+  "notice": "Titik label permukiman, bukan poligon batas desa. Kedekatan dengan simpang tidak membuktikan desa yang dilintasi.",
+  "places": [
+    {
+      "name": "Wates",
+      "place_type": "village",
+      "latitude": -7.6436938,
+      "longitude": 111.980172,
+      "osm_id": 1308636844,
+      "source_url": "https://www.openstreetmap.org/node/1308636844"
+    },
+    {
+      "name": "Kacangan",
+      "place_type": "village",
+      "latitude": -7.6596886,
+      "longitude": 111.8668034,
+      "osm_id": 1308637443,
+      "source_url": "https://www.openstreetmap.org/node/1308637443"
+    },
+    {
+      "name": "Talun",
+      "place_type": "village",
+      "latitude": -7.5227005,
+      "longitude": 111.939609,
+      "osm_id": 1308637519,
+      "source_url": "https://www.openstreetmap.org/node/1308637519"
+    },
+    {
+      "name": "Jetis",
+      "place_type": "village",
+      "latitude": -7.6578672,
+      "longitude": 111.9325665,
+      "osm_id": 1308637603,
+      "source_url": "https://www.openstreetmap.org/node/1308637603"
+    },
+    {
+      "name": "Jatirejo",
+      "place_type": "village",
+      "latitude": -7.5384687,
+      "longitude": 111.9069801,
+      "osm_id": 1308640237,
+      "source_url": "https://www.openstreetmap.org/node/1308640237"
+    },
+    {
+      "name": "Grojogan",
+      "place_type": "village",
+      "latitude": -7.6192022,
+      "longitude": 111.8649016,
+      "osm_id": 1308645158,
+      "source_url": "https://www.openstreetmap.org/node/1308645158"
+    },
+    {
+      "name": "Bungur",
+      "place_type": "village",
+      "latitude": -7.6088904,
+      "longitude": 111.9614013,
+      "osm_id": 1308645256,
+      "source_url": "https://www.openstreetmap.org/node/1308645256"
+    },
+    {
+      "name": "Senggowar",
+      "place_type": "village",
+      "latitude": -7.5159753,
+      "longitude": 111.9561245,
+      "osm_id": 1308645384,
+      "source_url": "https://www.openstreetmap.org/node/1308645384"
+    },
+    {
+      "name": "Sombron",
+      "place_type": "village",
+      "latitude": -7.6200011,
+      "longitude": 111.9086068,
+      "osm_id": 1308645708,
+      "source_url": "https://www.openstreetmap.org/node/1308645708"
+    },
+    {
+      "name": "Werungotok",
+      "place_type": "village",
+      "latitude": -7.5938164,
+      "longitude": 111.9233018,
+      "osm_id": 1308645789,
+      "source_url": "https://www.openstreetmap.org/node/1308645789"
+    },
+    {
+      "name": "Kwagean",
+      "place_type": "village",
+      "latitude": -7.6394468,
+      "longitude": 111.9089636,
+      "osm_id": 1308647454,
+      "source_url": "https://www.openstreetmap.org/node/1308647454"
+    },
+    {
+      "name": "Rejoso",
+      "place_type": "village",
+      "latitude": -7.5277014,
+      "longitude": 111.9045653,
+      "osm_id": 1308647632,
+      "source_url": "https://www.openstreetmap.org/node/1308647632"
+    },
+    {
+      "name": "Banaran",
+      "place_type": "village",
+      "latitude": -7.6546249,
+      "longitude": 111.9218424,
+      "osm_id": 1308649276,
+      "source_url": "https://www.openstreetmap.org/node/1308649276"
+    },
+    {
+      "name": "Sidokare",
+      "place_type": "village",
+      "latitude": -7.560183,
+      "longitude": 111.8691107,
+      "osm_id": 1308650595,
+      "source_url": "https://www.openstreetmap.org/node/1308650595"
+    },
+    {
+      "name": "Bagor Kulon",
+      "place_type": "village",
+      "latitude": -7.5640037,
+      "longitude": 111.8470699,
+      "osm_id": 1308651848,
+      "source_url": "https://www.openstreetmap.org/node/1308651848"
+    },
+    {
+      "name": "Karangsemi",
+      "place_type": "village",
+      "latitude": -7.5587686,
+      "longitude": 111.9940263,
+      "osm_id": 1308653272,
+      "source_url": "https://www.openstreetmap.org/node/1308653272"
+    },
+    {
+      "name": "Balongrejo",
+      "place_type": "village",
+      "latitude": -7.6276423,
+      "longitude": 111.8833587,
+      "osm_id": 1308655371,
+      "source_url": "https://www.openstreetmap.org/node/1308655371"
+    },
+    {
+      "name": "Guyangan",
+      "place_type": "village",
+      "latitude": -7.5847341,
+      "longitude": 111.8781988,
+      "osm_id": 1308655734,
+      "source_url": "https://www.openstreetmap.org/node/1308655734"
+    },
+    {
+      "name": "Sukorejo",
+      "place_type": "village",
+      "latitude": -7.6291817,
+      "longitude": 111.9002467,
+      "osm_id": 1308656966,
+      "source_url": "https://www.openstreetmap.org/node/1308656966"
+    },
+    {
+      "name": "Kenep",
+      "place_type": "village",
+      "latitude": -7.6437732,
+      "longitude": 111.9225049,
+      "osm_id": 1308657518,
+      "source_url": "https://www.openstreetmap.org/node/1308657518"
+    },
+    {
+      "name": "Campur",
+      "place_type": "village",
+      "latitude": -7.5353916,
+      "longitude": 111.9498147,
+      "osm_id": 1308659137,
+      "source_url": "https://www.openstreetmap.org/node/1308659137"
+    },
+    {
+      "name": "Mlorah",
+      "place_type": "village",
+      "latitude": -7.5365759,
+      "longitude": 111.9173729,
+      "osm_id": 1308659879,
+      "source_url": "https://www.openstreetmap.org/node/1308659879"
+    },
+    {
+      "name": "Sekar Putih",
+      "place_type": "village",
+      "latitude": -7.6028472,
+      "longitude": 111.8772341,
+      "osm_id": 1308661703,
+      "source_url": "https://www.openstreetmap.org/node/1308661703"
+    },
+    {
+      "name": "Sonobekel",
+      "place_type": "village",
+      "latitude": -7.6395202,
+      "longitude": 111.9601442,
+      "osm_id": 1308662013,
+      "source_url": "https://www.openstreetmap.org/node/1308662013"
+    },
+    {
+      "name": "Gandu",
+      "place_type": "village",
+      "latitude": -7.5981173,
+      "longitude": 111.8754364,
+      "osm_id": 1308662075,
+      "source_url": "https://www.openstreetmap.org/node/1308662075"
+    },
+    {
+      "name": "Loceret",
+      "place_type": "town",
+      "latitude": -7.646838,
+      "longitude": 111.892674,
+      "osm_id": 1308662478,
+      "source_url": "https://www.openstreetmap.org/node/1308662478"
+    },
+    {
+      "name": "Mungkung",
+      "place_type": "village",
+      "latitude": -7.6353753,
+      "longitude": 111.8849036,
+      "osm_id": 1308662851,
+      "source_url": "https://www.openstreetmap.org/node/1308662851"
+    },
+    {
+      "name": "Ngangkatan",
+      "place_type": "village",
+      "latitude": -7.5278012,
+      "longitude": 111.9293725,
+      "osm_id": 1308663630,
+      "source_url": "https://www.openstreetmap.org/node/1308663630"
+    },
+    {
+      "name": "Setren",
+      "place_type": "village",
+      "latitude": -7.5634576,
+      "longitude": 111.8926077,
+      "osm_id": 1308663933,
+      "source_url": "https://www.openstreetmap.org/node/1308663933"
+    },
+    {
+      "name": "Kerep Kidul",
+      "place_type": "village",
+      "latitude": -7.5758382,
+      "longitude": 111.8755075,
+      "osm_id": 1308665154,
+      "source_url": "https://www.openstreetmap.org/node/1308665154"
+    },
+    {
+      "name": "Blitaran",
+      "place_type": "village",
+      "latitude": -7.6134702,
+      "longitude": 111.9639701,
+      "osm_id": 1308665703,
+      "source_url": "https://www.openstreetmap.org/node/1308665703"
+    },
+    {
+      "name": "Bagor Wetan",
+      "place_type": "village",
+      "latitude": -7.5826638,
+      "longitude": 111.9379442,
+      "osm_id": 1308665904,
+      "source_url": "https://www.openstreetmap.org/node/1308665904"
+    },
+    {
+      "name": "Mangun Dikaran",
+      "place_type": "village",
+      "latitude": -7.5937368,
+      "longitude": 111.9047298,
+      "osm_id": 1308666745,
+      "source_url": "https://www.openstreetmap.org/node/1308666745"
+    },
+    {
+      "name": "Sekaran",
+      "place_type": "village",
+      "latitude": -7.6420774,
+      "longitude": 111.9162854,
+      "osm_id": 1308667882,
+      "source_url": "https://www.openstreetmap.org/node/1308667882"
+    },
+    {
+      "name": "Banjarejo",
+      "place_type": "village",
+      "latitude": -7.5197202,
+      "longitude": 111.9049978,
+      "osm_id": 1308667955,
+      "source_url": "https://www.openstreetmap.org/node/1308667955"
+    },
+    {
+      "name": "Godean",
+      "place_type": "village",
+      "latitude": -7.6553114,
+      "longitude": 111.8969159,
+      "osm_id": 1308668472,
+      "source_url": "https://www.openstreetmap.org/node/1308668472"
+    },
+    {
+      "name": "Puh Kerep",
+      "place_type": "village",
+      "latitude": -7.5541468,
+      "longitude": 111.9315531,
+      "osm_id": 1308669916,
+      "source_url": "https://www.openstreetmap.org/node/1308669916"
+    },
+    {
+      "name": "Paron",
+      "place_type": "village",
+      "latitude": -7.5703373,
+      "longitude": 111.852485,
+      "osm_id": 1308670576,
+      "source_url": "https://www.openstreetmap.org/node/1308670576"
+    },
+    {
+      "name": "Kedondong",
+      "place_type": "village",
+      "latitude": -7.5850021,
+      "longitude": 111.88453,
+      "osm_id": 1308670974,
+      "source_url": "https://www.openstreetmap.org/node/1308670974"
+    },
+    {
+      "name": "Kedung Soko",
+      "place_type": "village",
+      "latitude": -7.5987918,
+      "longitude": 111.9859006,
+      "osm_id": 1308671464,
+      "source_url": "https://www.openstreetmap.org/node/1308671464"
+    },
+    {
+      "name": "Banaran Wetan",
+      "place_type": "village",
+      "latitude": -7.5517298,
+      "longitude": 111.8696238,
+      "osm_id": 1308672917,
+      "source_url": "https://www.openstreetmap.org/node/1308672917"
+    },
+    {
+      "name": "Jatirejo",
+      "place_type": "village",
+      "latitude": -7.6528154,
+      "longitude": 111.8913689,
+      "osm_id": 1308673175,
+      "source_url": "https://www.openstreetmap.org/node/1308673175"
+    },
+    {
+      "name": "Klagen",
+      "place_type": "village",
+      "latitude": -7.5351523,
+      "longitude": 111.9019605,
+      "osm_id": 1308673920,
+      "source_url": "https://www.openstreetmap.org/node/1308673920"
+    },
+    {
+      "name": "Mungkung",
+      "place_type": "village",
+      "latitude": -7.5693866,
+      "longitude": 111.8904956,
+      "osm_id": 1308674218,
+      "source_url": "https://www.openstreetmap.org/node/1308674218"
+    },
+    {
+      "name": "Buduran",
+      "place_type": "village",
+      "latitude": -7.5987045,
+      "longitude": 111.8717325,
+      "osm_id": 1308675276,
+      "source_url": "https://www.openstreetmap.org/node/1308675276"
+    },
+    {
+      "name": "Sukomoro",
+      "place_type": "town",
+      "latitude": -7.6024234,
+      "longitude": 111.9428513,
+      "osm_id": 1308675576,
+      "source_url": "https://www.openstreetmap.org/node/1308675576"
+    },
+    {
+      "name": "Musir Kidul",
+      "place_type": "village",
+      "latitude": -7.5144202,
+      "longitude": 111.9090046,
+      "osm_id": 1308676517,
+      "source_url": "https://www.openstreetmap.org/node/1308676517"
+    },
+    {
+      "name": "Sengkut",
+      "place_type": "village",
+      "latitude": -7.6510823,
+      "longitude": 111.879923,
+      "osm_id": 1308677154,
+      "source_url": "https://www.openstreetmap.org/node/1308677154"
+    },
+    {
+      "name": "Sukoharjo",
+      "place_type": "village",
+      "latitude": -7.5483365,
+      "longitude": 111.8556223,
+      "osm_id": 1308678329,
+      "source_url": "https://www.openstreetmap.org/node/1308678329"
+    },
+    {
+      "name": "Nglinggo",
+      "place_type": "village",
+      "latitude": -7.5733428,
+      "longitude": 111.978594,
+      "osm_id": 1308679564,
+      "source_url": "https://www.openstreetmap.org/node/1308679564"
+    },
+    {
+      "name": "Sugih Waras",
+      "place_type": "village",
+      "latitude": -7.574764,
+      "longitude": 111.8916903,
+      "osm_id": 1308679731,
+      "source_url": "https://www.openstreetmap.org/node/1308679731"
+    },
+    {
+      "name": "Ngadirejo",
+      "place_type": "village",
+      "latitude": -7.6289679,
+      "longitude": 111.9795692,
+      "osm_id": 1308680950,
+      "source_url": "https://www.openstreetmap.org/node/1308680950"
+    },
+    {
+      "name": "Ngrengket",
+      "place_type": "village",
+      "latitude": -7.5795412,
+      "longitude": 111.9093823,
+      "osm_id": 1308681007,
+      "source_url": "https://www.openstreetmap.org/node/1308681007"
+    },
+    {
+      "name": "Nglaban",
+      "place_type": "village",
+      "latitude": -7.6242301,
+      "longitude": 111.9250148,
+      "osm_id": 1308682112,
+      "source_url": "https://www.openstreetmap.org/node/1308682112"
+    },
+    {
+      "name": "Tempel Wetan",
+      "place_type": "village",
+      "latitude": -7.6542649,
+      "longitude": 111.8798066,
+      "osm_id": 1308682904,
+      "source_url": "https://www.openstreetmap.org/node/1308682904"
+    },
+    {
+      "name": "Pandean",
+      "place_type": "village",
+      "latitude": -7.5320024,
+      "longitude": 111.9600701,
+      "osm_id": 1308682945,
+      "source_url": "https://www.openstreetmap.org/node/1308682945"
+    },
+    {
+      "name": "Sukorejo",
+      "place_type": "village",
+      "latitude": -7.5637473,
+      "longitude": 111.8782428,
+      "osm_id": 1308683914,
+      "source_url": "https://www.openstreetmap.org/node/1308683914"
+    },
+    {
+      "name": "Kedung Dowo",
+      "place_type": "village",
+      "latitude": -7.5733222,
+      "longitude": 111.9063866,
+      "osm_id": 1308684075,
+      "source_url": "https://www.openstreetmap.org/node/1308684075"
+    },
+    {
+      "name": "Begadung",
+      "place_type": "village",
+      "latitude": -7.5849529,
+      "longitude": 111.9046763,
+      "osm_id": 1308684426,
+      "source_url": "https://www.openstreetmap.org/node/1308684426"
+    },
+    {
+      "name": "Balong Gebang",
+      "place_type": "village",
+      "latitude": -7.5330463,
+      "longitude": 111.9788107,
+      "osm_id": 1308684900,
+      "source_url": "https://www.openstreetmap.org/node/1308684900"
+    },
+    {
+      "name": "Candirejo",
+      "place_type": "village",
+      "latitude": -7.6419202,
+      "longitude": 111.9001889,
+      "osm_id": 1308685102,
+      "source_url": "https://www.openstreetmap.org/node/1308685102"
+    },
+    {
+      "name": "Malangsari",
+      "place_type": "village",
+      "latitude": -7.6527349,
+      "longitude": 111.9735447,
+      "osm_id": 1308685580,
+      "source_url": "https://www.openstreetmap.org/node/1308685580"
+    },
+    {
+      "name": "Plosoharjo",
+      "place_type": "village",
+      "latitude": -7.6549737,
+      "longitude": 111.9483845,
+      "osm_id": 1308685987,
+      "source_url": "https://www.openstreetmap.org/node/1308685987"
+    },
+    {
+      "name": "Musir Lor",
+      "place_type": "village",
+      "latitude": -7.5109665,
+      "longitude": 111.9096046,
+      "osm_id": 1308686027,
+      "source_url": "https://www.openstreetmap.org/node/1308686027"
+    },
+    {
+      "name": "Sumberwindu",
+      "place_type": "village",
+      "latitude": -7.6538604,
+      "longitude": 111.8694536,
+      "osm_id": 1308686367,
+      "source_url": "https://www.openstreetmap.org/node/1308686367"
+    },
+    {
+      "name": "Mojoseto",
+      "place_type": "village",
+      "latitude": -7.5672063,
+      "longitude": 111.9890175,
+      "osm_id": 1308687063,
+      "source_url": "https://www.openstreetmap.org/node/1308687063"
+    },
+    {
+      "name": "Bulu",
+      "place_type": "village",
+      "latitude": -7.6218251,
+      "longitude": 111.8527233,
+      "osm_id": 1308688066,
+      "source_url": "https://www.openstreetmap.org/node/1308688066"
+    },
+    {
+      "name": "Putren",
+      "place_type": "village",
+      "latitude": -7.5815452,
+      "longitude": 111.9242258,
+      "osm_id": 1308688106,
+      "source_url": "https://www.openstreetmap.org/node/1308688106"
+    },
+    {
+      "name": "Kepanjen",
+      "place_type": "village",
+      "latitude": -7.6372163,
+      "longitude": 111.934821,
+      "osm_id": 1308691214,
+      "source_url": "https://www.openstreetmap.org/node/1308691214"
+    },
+    {
+      "name": "Jintel",
+      "place_type": "village",
+      "latitude": -7.5165977,
+      "longitude": 111.9380599,
+      "osm_id": 1308694154,
+      "source_url": "https://www.openstreetmap.org/node/1308694154"
+    },
+    {
+      "name": "Mojorembun",
+      "place_type": "village",
+      "latitude": -7.5466369,
+      "longitude": 111.8760821,
+      "osm_id": 1308694588,
+      "source_url": "https://www.openstreetmap.org/node/1308694588"
+    },
+    {
+      "name": "Kendal Rejo",
+      "place_type": "village",
+      "latitude": -7.570623,
+      "longitude": 111.859021,
+      "osm_id": 1308695339,
+      "source_url": "https://www.openstreetmap.org/node/1308695339"
+    },
+    {
+      "name": "Ngrami",
+      "place_type": "village",
+      "latitude": -7.5851504,
+      "longitude": 111.9523188,
+      "osm_id": 1308695805,
+      "source_url": "https://www.openstreetmap.org/node/1308695805"
+    },
+    {
+      "name": "Ploso",
+      "place_type": "village",
+      "latitude": -7.6170994,
+      "longitude": 111.8985812,
+      "osm_id": 1308696159,
+      "source_url": "https://www.openstreetmap.org/node/1308696159"
+    },
+    {
+      "name": "Gondang Kulon",
+      "place_type": "village",
+      "latitude": -7.5223468,
+      "longitude": 111.953675,
+      "osm_id": 1308696302,
+      "source_url": "https://www.openstreetmap.org/node/1308696302"
+    },
+    {
+      "name": "Getas",
+      "place_type": "village",
+      "latitude": -7.6506975,
+      "longitude": 111.956771,
+      "osm_id": 1308696726,
+      "source_url": "https://www.openstreetmap.org/node/1308696726"
+    },
+    {
+      "name": "Pesudukuh",
+      "place_type": "village",
+      "latitude": -7.6018449,
+      "longitude": 111.8699877,
+      "osm_id": 1308696766,
+      "source_url": "https://www.openstreetmap.org/node/1308696766"
+    },
+    {
+      "name": "Teken Glagahan",
+      "place_type": "village",
+      "latitude": -7.6461674,
+      "longitude": 111.8833842,
+      "osm_id": 1308698861,
+      "source_url": "https://www.openstreetmap.org/node/1308698861"
+    },
+    {
+      "name": "Ngumpul",
+      "place_type": "village",
+      "latitude": -7.5865699,
+      "longitude": 111.849651,
+      "osm_id": 1308703074,
+      "source_url": "https://www.openstreetmap.org/node/1308703074"
+    },
+    {
+      "name": "Tiripan",
+      "place_type": "village",
+      "latitude": -7.63316,
+      "longitude": 111.8695924,
+      "osm_id": 1308705061,
+      "source_url": "https://www.openstreetmap.org/node/1308705061"
+    },
+    {
+      "name": "Ngadiboyo",
+      "place_type": "village",
+      "latitude": -7.5305835,
+      "longitude": 111.8733317,
+      "osm_id": 1308705549,
+      "source_url": "https://www.openstreetmap.org/node/1308705549"
+    },
+    {
+      "name": "Sumengko",
+      "place_type": "village",
+      "latitude": -7.6214835,
+      "longitude": 111.936147,
+      "osm_id": 1308706198,
+      "source_url": "https://www.openstreetmap.org/node/1308706198"
+    },
+    {
+      "name": "Sumber Urip",
+      "place_type": "village",
+      "latitude": -7.6300399,
+      "longitude": 111.8495992,
+      "osm_id": 1308707071,
+      "source_url": "https://www.openstreetmap.org/node/1308707071"
+    },
+    {
+      "name": "Talang",
+      "place_type": "village",
+      "latitude": -7.5269364,
+      "longitude": 111.9067846,
+      "osm_id": 1308708652,
+      "source_url": "https://www.openstreetmap.org/node/1308708652"
+    },
+    {
+      "name": "Banaran Kulon",
+      "place_type": "village",
+      "latitude": -7.5553672,
+      "longitude": 111.8611688,
+      "osm_id": 1308712764,
+      "source_url": "https://www.openstreetmap.org/node/1308712764"
+    },
+    {
+      "name": "Petak",
+      "place_type": "village",
+      "latitude": -7.5664215,
+      "longitude": 111.8502297,
+      "osm_id": 1308713039,
+      "source_url": "https://www.openstreetmap.org/node/1308713039"
+    },
+    {
+      "name": "Sambi Kerep",
+      "place_type": "village",
+      "latitude": -7.5045221,
+      "longitude": 111.901546,
+      "osm_id": 1308714304,
+      "source_url": "https://www.openstreetmap.org/node/1308714304"
+    },
+    {
+      "name": "Nglundo",
+      "place_type": "village",
+      "latitude": -7.6029293,
+      "longitude": 111.9696373,
+      "osm_id": 1308715328,
+      "source_url": "https://www.openstreetmap.org/node/1308715328"
+    },
+    {
+      "name": "Gejagan",
+      "place_type": "village",
+      "latitude": -7.6326542,
+      "longitude": 111.8906204,
+      "osm_id": 1308716386,
+      "source_url": "https://www.openstreetmap.org/node/1308716386"
+    },
+    {
+      "name": "Kramat",
+      "place_type": "village",
+      "latitude": -7.6130475,
+      "longitude": 111.9132261,
+      "osm_id": 1308716588,
+      "source_url": "https://www.openstreetmap.org/node/1308716588"
+    },
+    {
+      "name": "Pehserut",
+      "place_type": "village",
+      "latitude": -7.5991023,
+      "longitude": 111.9312212,
+      "osm_id": 1308717694,
+      "source_url": "https://www.openstreetmap.org/node/1308717694"
+    },
+    {
+      "name": "Patihan",
+      "place_type": "village",
+      "latitude": -7.6524267,
+      "longitude": 111.9074387,
+      "osm_id": 1308720351,
+      "source_url": "https://www.openstreetmap.org/node/1308720351"
+    },
+    {
+      "name": "Kecubung",
+      "place_type": "village",
+      "latitude": -7.6554185,
+      "longitude": 111.9340578,
+      "osm_id": 1308720584,
+      "source_url": "https://www.openstreetmap.org/node/1308720584"
+    },
+    {
+      "name": "Sumberjo",
+      "place_type": "village",
+      "latitude": -7.5745115,
+      "longitude": 111.9569265,
+      "osm_id": 1308723397,
+      "source_url": "https://www.openstreetmap.org/node/1308723397"
+    },
+    {
+      "name": "Gempol",
+      "place_type": "village",
+      "latitude": -7.5689715,
+      "longitude": 111.8954327,
+      "osm_id": 1308723876,
+      "source_url": "https://www.openstreetmap.org/node/1308723876"
+    },
+    {
+      "name": "Selorejo",
+      "place_type": "village",
+      "latitude": -7.5756001,
+      "longitude": 111.8662688,
+      "osm_id": 1308725578,
+      "source_url": "https://www.openstreetmap.org/node/1308725578"
+    },
+    {
+      "name": "Banjar Anyar",
+      "place_type": "village",
+      "latitude": -7.6176718,
+      "longitude": 111.9936497,
+      "osm_id": 1308726618,
+      "source_url": "https://www.openstreetmap.org/node/1308726618"
+    },
+    {
+      "name": "Balongrejo",
+      "place_type": "village",
+      "latitude": -7.6039866,
+      "longitude": 111.849025,
+      "osm_id": 1308726755,
+      "source_url": "https://www.openstreetmap.org/node/1308726755"
+    },
+    {
+      "name": "Kedung Padang",
+      "place_type": "village",
+      "latitude": -7.5046347,
+      "longitude": 111.94047,
+      "osm_id": 1308726997,
+      "source_url": "https://www.openstreetmap.org/node/1308726997"
+    },
+    {
+      "name": "Ganung Kidul",
+      "place_type": "village",
+      "latitude": -7.6054421,
+      "longitude": 111.9067947,
+      "osm_id": 1308727692,
+      "source_url": "https://www.openstreetmap.org/node/1308727692"
+    },
+    {
+      "name": "Ringinanom",
+      "place_type": "village",
+      "latitude": -7.5876021,
+      "longitude": 111.8915248,
+      "osm_id": 11262929647,
+      "source_url": "https://www.openstreetmap.org/node/11262929647"
+    },
+    {
+      "name": "Kacangan",
+      "place_type": "hamlet",
+      "latitude": -7.6256118,
+      "longitude": 111.8779688,
+      "osm_id": 13737235588,
+      "source_url": "https://www.openstreetmap.org/node/13737235588"
+    },
+    {
+      "name": "Sanggrahan",
+      "place_type": "hamlet",
+      "latitude": -7.6221784,
+      "longitude": 111.9192355,
+      "osm_id": 13737251700,
+      "source_url": "https://www.openstreetmap.org/node/13737251700"
+    },
+    {
+      "name": "Kalangan",
+      "place_type": "hamlet",
+      "latitude": -7.6353605,
+      "longitude": 111.8929935,
+      "osm_id": 13737266548,
+      "source_url": "https://www.openstreetmap.org/node/13737266548"
+    },
+    {
+      "name": "Koripan",
+      "place_type": "hamlet",
+      "latitude": -7.6158739,
+      "longitude": 111.9281498,
+      "osm_id": 13737268278,
+      "source_url": "https://www.openstreetmap.org/node/13737268278"
+    },
+    {
+      "name": "Mantub",
+      "place_type": "hamlet",
+      "latitude": -7.612191,
+      "longitude": 111.9195811,
+      "osm_id": 13737268741,
+      "source_url": "https://www.openstreetmap.org/node/13737268741"
+    },
+    {
+      "name": "Besuk",
+      "place_type": "hamlet",
+      "latitude": -7.6290263,
+      "longitude": 111.9026574,
+      "osm_id": 13737269491,
+      "source_url": "https://www.openstreetmap.org/node/13737269491"
+    },
+    {
+      "name": "Jlumpang",
+      "place_type": "hamlet",
+      "latitude": -7.6145799,
+      "longitude": 111.8764904,
+      "osm_id": 13737273277,
+      "source_url": "https://www.openstreetmap.org/node/13737273277"
+    },
+    {
+      "name": "Bedingin",
+      "place_type": "hamlet",
+      "latitude": -7.6264967,
+      "longitude": 111.8971167,
+      "osm_id": 13737279495,
+      "source_url": "https://www.openstreetmap.org/node/13737279495"
+    },
+    {
+      "name": "Beran",
+      "place_type": "hamlet",
+      "latitude": -7.6205352,
+      "longitude": 111.9057944,
+      "osm_id": 13737279747,
+      "source_url": "https://www.openstreetmap.org/node/13737279747"
+    },
+    {
+      "name": "Barong",
+      "place_type": "hamlet",
+      "latitude": -7.6363738,
+      "longitude": 111.8828364,
+      "osm_id": 13737283454,
+      "source_url": "https://www.openstreetmap.org/node/13737283454"
+    },
+    {
+      "name": "Sepang",
+      "place_type": "hamlet",
+      "latitude": -7.6287215,
+      "longitude": 111.885393,
+      "osm_id": 13737284882,
+      "source_url": "https://www.openstreetmap.org/node/13737284882"
+    },
+    {
+      "name": "Ngelan",
+      "place_type": "hamlet",
+      "latitude": -7.6439545,
+      "longitude": 111.8931042,
+      "osm_id": 13737285039,
+      "source_url": "https://www.openstreetmap.org/node/13737285039"
+    },
+    {
+      "name": "Tanggungan",
+      "place_type": "hamlet",
+      "latitude": -7.6296032,
+      "longitude": 111.8823122,
+      "osm_id": 13737285040,
+      "source_url": "https://www.openstreetmap.org/node/13737285040"
+    },
+    {
+      "name": "Jamusan",
+      "place_type": "hamlet",
+      "latitude": -7.6254498,
+      "longitude": 111.874799,
+      "osm_id": 13737286558,
+      "source_url": "https://www.openstreetmap.org/node/13737286558"
+    },
+    {
+      "name": "Patik",
+      "place_type": "hamlet",
+      "latitude": -7.6180047,
+      "longitude": 111.8715702,
+      "osm_id": 13737289148,
+      "source_url": "https://www.openstreetmap.org/node/13737289148"
+    },
+    {
+      "name": "Bonggah",
+      "place_type": "hamlet",
+      "latitude": -7.6191513,
+      "longitude": 111.8951072,
+      "osm_id": 13737296117,
+      "source_url": "https://www.openstreetmap.org/node/13737296117"
+    },
+    {
+      "name": "Sono",
+      "place_type": "hamlet",
+      "latitude": -7.619361,
+      "longitude": 111.8740191,
+      "osm_id": 13737296401,
+      "source_url": "https://www.openstreetmap.org/node/13737296401"
+    },
+    {
+      "name": "Cacingan",
+      "place_type": "hamlet",
+      "latitude": -7.6146858,
+      "longitude": 111.8863953,
+      "osm_id": 13737297622,
+      "source_url": "https://www.openstreetmap.org/node/13737297622"
+    },
+    {
+      "name": "Winong",
+      "place_type": "hamlet",
+      "latitude": -7.6138688,
+      "longitude": 111.9008398,
+      "osm_id": 13737299121,
+      "source_url": "https://www.openstreetmap.org/node/13737299121"
+    },
+    {
+      "name": "Jajar",
+      "place_type": "hamlet",
+      "latitude": -7.6319707,
+      "longitude": 111.9009709,
+      "osm_id": 13737302686,
+      "source_url": "https://www.openstreetmap.org/node/13737302686"
+    },
+    {
+      "name": "Sambijajar",
+      "place_type": "hamlet",
+      "latitude": -7.6396588,
+      "longitude": 111.9003643,
+      "osm_id": 13737304037,
+      "source_url": "https://www.openstreetmap.org/node/13737304037"
+    },
+    {
+      "name": "Kendal",
+      "place_type": "hamlet",
+      "latitude": -7.6166672,
+      "longitude": 111.9189055,
+      "osm_id": 13737307581,
+      "source_url": "https://www.openstreetmap.org/node/13737307581"
+    },
+    {
+      "name": "Pugruk",
+      "place_type": "hamlet",
+      "latitude": -7.6233707,
+      "longitude": 111.9110119,
+      "osm_id": 13737308411,
+      "source_url": "https://www.openstreetmap.org/node/13737308411"
+    },
+    {
+      "name": "Templek",
+      "place_type": "hamlet",
+      "latitude": -7.6007865,
+      "longitude": 111.9415791,
+      "osm_id": 13737314901,
+      "source_url": "https://www.openstreetmap.org/node/13737314901"
+    }
+  ]
+}

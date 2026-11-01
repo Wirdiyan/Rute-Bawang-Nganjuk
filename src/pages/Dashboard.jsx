@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from '../components/layout/Header.jsx';
 import RouteConfiguration from '../components/route/RouteConfiguration.jsx';
 import RouteMap from '../components/route/RouteMap.jsx';
+import WholeNodeJourney from '../components/route/WholeNodeJourney.jsx';
 import RouteSummary from '../components/route/RouteSummary.jsx';
 import RoutePlan from '../components/route/RoutePlan.jsx';
 import AlternativeRoutes from '../components/route/AlternativeRoutes.jsx';
@@ -106,8 +107,9 @@ export default function Dashboard() {
       {loading && <p className="api-loading" role="status">Memeriksa dataset jalan…</p>}
       {error && <div className="api-error" role="alert" tabIndex="-1" ref={errorBox}><strong>Permintaan belum berhasil</strong><span>{error}</span>{!dataset && <button onClick={() => window.location.reload()}>Muat ulang</button>}</div>}
       {result && dirty && <p className="stale-notice" role="status">Konfigurasi berubah. Peta dan tabel masih menampilkan hasil perhitungan sebelumnya sampai Anda menghitung ulang.</p>}
-      <section className="workbench-grid" id="workbench"><RouteConfiguration dataset={dataset} selected={selected} onSelect={toggleDestination} heuristic={heuristic} onHeuristic={(value) => change(setHeuristic, value)} compare={compare} onCompare={(value) => change(setCompare, value)} blocked={blocked} onBlock={(checked) => change(setBlocked, checked ? [closureEdge] : [])} edgeOptions={edgeOptions} closureEdge={closureEdge} onClosureEdge={chooseClosure} canBlock={Boolean(result?.combined_path?.length > 1)} onOptimize={compute} busy={busy} dirty={dirty}/><RouteMap locations={locations} optimal={result} currentStep={result?.trace[cursor]} loading={loading} error={error}/></section>
+      <section className="workbench-grid" id="workbench"><RouteConfiguration dataset={dataset} selected={selected} onSelect={toggleDestination} heuristic={heuristic} onHeuristic={(value) => change(setHeuristic, value)} compare={compare} onCompare={(value) => change(setCompare, value)} blocked={blocked} onBlock={(checked) => change(setBlocked, checked ? [closureEdge] : [])} edgeOptions={edgeOptions} closureEdge={closureEdge} onClosureEdge={chooseClosure} canBlock={Boolean(result?.combined_path?.length > 1)} onOptimize={compute} busy={busy} dirty={dirty}/><RouteMap locations={locations} optimal={result} currentStep={result?.trace[cursor]} loading={loading} error={error} busy={busy} dirty={dirty}/></section>
       {result && <p className="run-metadata" role="status">Perhitungan baru · {new Date(result.computed_at_utc).toLocaleString('id-ID')} · ID {result.run_id.slice(0, 8)} · Dataset {result.dataset.version}{result.request.blocked_edges.length ? ` · ${result.request.blocked_edges.length} ruas berarah ditutup` : ''}</p>}
+      <WholeNodeJourney optimal={result} locations={locations} busy={busy} dirty={dirty}/>
       <RouteSummary stats={stats}/>
       <div className="detail-grid">
         <div className="detail-column"><RoutePlan stops={stops}/><AlternativeRoutes routes={alternatives} count={alternatives.length} enabled={result?.comparison.enabled}/><WhyOptimal explanation={createOptimalExplanation(result)}/></div>

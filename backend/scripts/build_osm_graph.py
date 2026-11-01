@@ -21,6 +21,8 @@ import pandas as pd
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
+from backend.location_references import prepared_reference, validate_location_reference
 BACKEND_DIR = PROJECT_ROOT / "backend"
 RAW_DIR = BACKEND_DIR / "data" / "raw"
 OUTPUT_DIR = BACKEND_DIR / "outputs"
@@ -67,6 +69,11 @@ def configure_osmnx() -> None:
 
 def geocode_one(name: str, query: str) -> dict[str, Any]:
     """Find and select the most relevant Nominatim result for a locality."""
+    reference = prepared_reference(name)
+    if reference is not None:
+        validate_location_reference(reference)
+        log(f"  Referensi terkurasi: {reference['display_name']}")
+        return reference
     candidates = []
     for result_number in range(1, 6):
         try:
@@ -255,6 +262,8 @@ def validate_graph(graph: nx.MultiDiGraph, locations: dict[str, Any]) -> tuple[l
     weak_components = list(nx.weakly_connected_components(graph))
     component_by_node = {node: index for index, component in enumerate(weak_components) for node in component}
     targets = [locations["warehouse"], *locations["destinations"]]
+    for target in targets:
+        validate_location_reference(target)
 
     log("\n[5/6] Mapping locations to the nearest graph nodes...")
     try:
@@ -378,7 +387,7 @@ def save_outputs(graph: nx.MultiDiGraph, locations: dict[str, Any], bbox: tuple[
         "data_attribution": "© OpenStreetMap contributors",
         "data_license": "Open Database License (ODbL) 1.0",
         "copyright_url": "https://www.openstreetmap.org/copyright",
-        "geocoder": "Nominatim via OSMnx",
+        "geocoder": "Nominatim via OSMnx + referensi lokasi terkurasi",
         "network_type": NETWORK_TYPE,
         "extracted_at_utc": extracted_at,
         "bbox_west_south_east_north": list(bbox),

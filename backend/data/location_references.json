@@ -1,0 +1,24 @@
+{
+  "Gondang": {
+    "reference_id": "gondang-district-office-64451-bps2016",
+    "name": "Gondang",
+    "reference_label": "Referensi Kantor Kecamatan Gondang",
+    "district": "Gondang",
+    "locality": "Gondangkulon",
+    "regency": "Nganjuk",
+    "province": "Jawa Timur",
+    "postal_code": "64451",
+    "latitude": -7.527964,
+    "longitude": 111.956318,
+    "display_name": "Referensi Kantor Kecamatan Gondang, Gondangkulon, Kecamatan Gondang, Kabupaten Nganjuk, Jawa Timur 64451, Indonesia",
+    "place_type": "district_office_reference",
+    "coordinate_source": "BPS Kabupaten Nganjuk, Kecamatan Gondang Dalam Angka 2016, Tabel 1.2, halaman 4, baris Kecamatan. Lintang Selatan dikonversi menjadi negatif.",
+    "source_urls": [
+      "https://web-api.bps.go.id/download.php?f=OjhIQ0J9ZaH1k3qyvRfEYCtURGpZa29kZ2FoeFBZclRjUHJsU2VlS2FZWHRlQjRUMHlTNkpRc3hGdjB1RTdvVC90WlR6STJvUTZtNUVXTFY1ZVZYR1htN2VlS3MyZEdFdy9UdXNwRGo5N1RnSC96OEFHdHprWGNEcHV4dG8zRFk2MGdPL0pQZktVNGRRcVp5R25SRHRXUnFqcmp5U0VHRmpaQ2Q2VTlqU3pSTm5RMW5GRDk1Zmk3Y0VxNHBJNlRQVHVDbjZyY1JjZzhtM0VSZUtuanBucWdlK05zSVJxeXVpWDdmQ0JkUlVERXRwSitwb21YSlV3bVlLL2xQWTZFZ0Nvb1NBZFdWT3FoTWhZd0U%3D",
+      "https://kampungkb.kemendukbangga.go.id/kampung/85147/desa-gondangkulon"
+    ],
+    "verified_on": "2026-11-01",
+    "confirmed_delivery_point": false,
+    "note": "Titik referensi simulasi bersumber BPS 2016, bukan pengukuran gudang atau penerima aktual. Kode pos dan konteks administratif diperiksa silang dengan profil Gondangkulon pada portal pemerintah."
+  }
+}

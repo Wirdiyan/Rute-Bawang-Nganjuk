@@ -139,10 +139,12 @@ class LiveApiTests(unittest.TestCase):
         items=[{'name':n,'latitude':0,'longitude':0,'nearest_node':i,'place_type':'reference'} for i,n in enumerate(names)]
         (self.root/'locations.json').write_text(json.dumps({'warehouse':items[0],'destinations':items[1:],'metadata':{}}),encoding='utf-8')
         self.patcher=patch.object(solver,'OUTPUT',self.root);self.patcher.start();solver._load_dataset.cache_clear()
+        self.geo_patcher=patch.object(solver,"validate_location_reference")
+        self.geo_patcher.start()  # Synthetic graph coordinates are tested independently from real geography.
         self.client=TestClient(app)
 
     def tearDown(self):
-        self.client.close();solver._load_dataset.cache_clear();self.patcher.stop();self.folder.cleanup()
+        self.client.close();solver._load_dataset.cache_clear();self.patcher.stop();self.geo_patcher.stop();self.folder.cleanup()
 
     def test_fresh_run_and_changed_selection(self):
         one=self.client.post('/api/route/optimize',json={})

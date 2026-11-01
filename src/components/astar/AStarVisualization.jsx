@@ -17,7 +17,7 @@ export default function AStarVisualization({ result, cursor, onCursor, playing, 
       <p className="trace-parent">Parent: {step.parent ?? '— (state awal)'} · tersisa: {names.filter((_, index) => !(step.mask & (1 << index))).join(', ') || (step.status === 'goal' ? 'selesai' : 'kembali ke gudang')}</p>
       <div className="set-section"><div className="set-heading"><label>OPEN · KANDIDAT</label><span>{snapshot.openCount.toLocaleString('id-ID')} state</span></div><div className="token-list">{snapshot.open.map((state) => <span className="node-token open" key={state.key}>#{state.node} / {state.mask.toString(2).padStart(names.length, '0')} · f {(state.f / 1000).toFixed(2)}</span>)}</div><small className="config-intro">Maksimal 8 kandidat dengan f terkecil ditampilkan.</small></div>
       <div className="set-section"><div className="set-heading"><label>CLOSED · SUDAH DIEKSPANSI</label><span>{snapshot.closedCount.toLocaleString('id-ID')} state</span></div><div className="token-list">{snapshot.closed.map((state) => <span className="node-token closed" key={state.key}>#{state.node} / {state.mask.toString(2).padStart(names.length, '0')}</span>)}</div><small className="config-intro">8 state terakhir; state boleh dibuka kembali jika g membaik.</small></div>
-      <p className="config-intro">Digit mask mengikuti urutan input dari kanan ke kiri: {names.join(', ')}. Angka biaya dalam km. Lingkaran pada peta menandai node ekspansi terpilih.</p>
+      <p className="config-intro">Digit mask mengikuti urutan input dari kanan ke kiri: {names.join(', ')}. Angka biaya dalam km. Pilih Simulasi Peta, lalu Proses pencarian A*, untuk melihat node ekspansi terpilih.</p>
     </>}
   </section>;
 }

@@ -11,7 +11,7 @@ Gunakan langkah ini hanya jika memang ingin mengganti snapshot dataset. Pemakaia
 .\.venv\Scripts\python backend/scripts/build_osm_graph.py
 ```
 
-Skrip mencari referensi Sukomoro, Nganjuk, Rejoso, dan Gondang melalui Nominatim/OSMnx, mengunduh graf `drive` berarah, memeriksa panjang ruas dan keterhubungan, lalu mengekspor GraphML, tabel node/ruas dan metadata lokasi. Ini menghasilkan titik referensi permukiman, bukan gudang/penerima barang yang sudah diverifikasi. Periksa kandidat geocoding, kecocokan lokasi, dan pemetaan node sebelum menerima dataset baru.
+Skrip mencari Sukomoro, Nganjuk dan Rejoso melalui Nominatim/OSMnx, memakai referensi terkurasi Kecamatan Gondang 64451 dari `backend/data/location_references.json`, mengunduh graf `drive` berarah, memeriksa panjang ruas dan keterhubungan, lalu mengekspor GraphML, tabel node/ruas dan metadata lokasi. Ini menghasilkan titik referensi permukiman, bukan gudang/penerima barang yang sudah diverifikasi. Periksa kandidat geocoding, kecocokan lokasi, dan pemetaan node sebelum menerima dataset baru.
 
 Geocoding nama tidak mengesahkan titik pengiriman. Untuk penggunaan nyata, tetapkan koordinat serah-terima, dokumentasikan sumber persetujuannya, sesuaikan tahap pemetaan titik, dan uji akses jalan untuk kendaraan. Pengaturan `drive` tidak menjamin seluruh pembatasan truk/logistik telah dimodelkan.
 
@@ -33,3 +33,5 @@ Untuk memperbarui snapshot **pairwise historis** yang dipakai endpoint GET kompa
 Perintah terakhir menulis ulang `route_optimization.json`. Workbench utama menghitung hasil langsung di memori dan tidak memerlukan pembaruan berkas ini.
 
 Sumber: © OpenStreetMap contributors, [Open Database License](https://www.openstreetmap.org/copyright).
+
+Gondang tidak lagi dipilih dari pencarian nama generik. Referensi historis BPS 2016 (-7.527964, 111.956318) digunakan sebagai titik simulasi kecamatan. Kode pos 64451, konteks Gondangkulon, sumber koordinat, dan pencegahan regresi diperiksa oleh `backend/location_references.py`. Jangan menggantinya dengan desa senama berkode pos 64472.

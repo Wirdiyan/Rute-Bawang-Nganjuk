@@ -16,12 +16,14 @@ from shapely import wkt
 from backend.algorithms.astar import AStarError, _edge_length, _validate_graph, haversine_m
 from backend.algorithms.multi_goal import multi_goal_astar
 from backend.algorithms.route_optimizer import optimize_route
+from backend.location_references import REFERENCES_PATH, validate_location_reference
+from backend.road_lesson import build_road_lessons
 
 OUTPUT = Path(__file__).resolve().parents[1] / "outputs"
 
 
 @lru_cache(maxsize=2)
-def _load_dataset(graph_signature, location_signature):
+def _load_dataset(graph_signature, location_signature, reference_signature):
     graph = nx.read_graphml(OUTPUT / "road_network.graphml", node_type=int)
     _validate_graph(graph)
     raw = json.loads((OUTPUT / "locations.json").read_text(encoding="utf-8"))
@@ -32,6 +34,7 @@ def _load_dataset(graph_signature, location_signature):
         raise AStarError("Dua lokasi dipetakan ke node jalan yang sama.")
     points = []
     for item in references:
+        validate_location_reference(item)
         node = item["nearest_node"]
         if node not in graph:
             raise AStarError(f"Node referensi {item['name']} tidak ditemukan.")
@@ -48,12 +51,13 @@ def _load_dataset(graph_signature, location_signature):
                        "road_latitude": float(graph.nodes[node]["y"]),
                        "road_longitude": float(graph.nodes[node]["x"]), "nearest_node": node,
                        "snap_distance_m": snap, "display_name": item.get("display_name", item["name"]),
-                       "place_type": item.get("place_type", "unknown"), "confirmed_delivery_point": False})
+                       "place_type": item.get("place_type", "unknown"), "confirmed_delivery_point": False,
+                       **{key: item.get(key) for key in ["reference_id", "reference_label", "postal_code", "district", "locality", "coordinate_source", "source_urls"]}})
     edge_bound_valid = all(float(attrs["length"]) + 1e-7 >= haversine_m(graph, u, v)
                            for u, v, attrs in graph.edges(data=True))
     digest = hashlib.sha256()
-    for name in ["road_network.graphml", "locations.json"]:
-        with (OUTPUT / name).open("rb") as file:
+    for path in [OUTPUT / "road_network.graphml", OUTPUT / "locations.json", REFERENCES_PATH]:
+        with path.open("rb") as file:
             for chunk in iter(lambda: file.read(1 << 20), b""):
                 digest.update(chunk)
     dataset = {"version": digest.hexdigest()[:16], "source": "OpenStreetMap",
@@ -61,14 +65,14 @@ def _load_dataset(graph_signature, location_signature):
                "node_count": graph.number_of_nodes(), "edge_count": graph.number_of_edges(),
                "distance_unit": "meters", "geometric_lower_bound_valid": edge_bound_valid,
                "simulation": True, "locations": points,
-               "notice": "Simulasi pada titik referensi OSM. Gudang dan penerima barang belum diverifikasi. "
+               "notice": "Simulasi pada titik referensi. Gondang menggunakan referensi kecamatan 64451 dari BPS; lokasi lainnya dari OSM. Gudang dan penerima barang belum diverifikasi. "
                          "Jarak dihitung antar-node jalan; jarak akses dari titik referensi tidak ditambahkan."}
     return graph, raw, dataset
 
 
 def load_dataset():
     try:
-        paths = [OUTPUT / name for name in ["road_network.graphml", "locations.json"]]
+        paths = [OUTPUT / name for name in ["road_network.graphml", "locations.json"]] + [REFERENCES_PATH]
         signatures = [(p.stat().st_mtime_ns, p.stat().st_size) for p in paths]
         return _load_dataset(*signatures)
     except (OSError, ValueError, KeyError, nx.NetworkXError) as exc:
@@ -133,6 +137,7 @@ def run_solver(request):
                            "total_distance_m": candidate["total_distance_m"],
                            "is_optimal": math.isclose(candidate["total_distance_m"], baseline["total_distance_m"], abs_tol=1e-5),
                            "is_selected": candidate["order"] == order})
+    road_lessons = build_road_lessons(graph, legs)
     return {"run_id": str(uuid4()), "computed_at_utc": datetime.now(timezone.utc).isoformat(),
             "request": request.model_dump(), "route": order, "total_distance_m": result["distance_m"],
             "total_distance_km": result["distance_m"]/1000, "combined_path": path, "legs": legs,
@@ -142,7 +147,8 @@ def run_solver(request):
                            "distance_m": baseline["total_distance_m"] if baseline else None,
                            "candidate_count": len(candidates), "execution_time_ms": baseline_ms},
             "candidates": candidates, "dataset": dataset,
-            "path_coordinates": expand_geometry(graph, path)}
+            "path_coordinates": expand_geometry(graph, path),
+            "road_lessons": road_lessons}
 
 
 def expand_geometry(graph, path):
