@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import csv
 import math
+from threading import BoundedSemaphore
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -323,3 +324,32 @@ def get_astar(
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=f"Cached A* result has an invalid structure: {exc}") from exc
+
+
+# Existing GET routes expose the historical, committed pairwise demonstration.
+# The workbench below computes a new whole-trip solution for every POST.
+from .schemas import SolveRequest
+from .solver import load_dataset, run_solver
+from backend.algorithms.astar import AStarError
+
+_solver_slot = BoundedSemaphore(1)
+
+
+@router.get("/dataset", summary="Validated dataset and simulation reference points")
+def get_dataset():
+    try:
+        return load_dataset()[2]
+    except AStarError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@router.post("/route/optimize", summary="Run A* multi-goal search now")
+def compute_route(request: SolveRequest):
+    if not _solver_slot.acquire(blocking=False):
+        raise HTTPException(status_code=409, detail="Pencarian lain masih berjalan. Tunggu sampai selesai lalu coba lagi.")
+    try:
+        return run_solver(request)
+    except AStarError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    finally:
+        _solver_slot.release()

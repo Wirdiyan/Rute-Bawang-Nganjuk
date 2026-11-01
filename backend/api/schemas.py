@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class HealthResponse(BaseModel):
@@ -91,3 +91,18 @@ class AStarResponse(BaseModel):
     closed_nodes: list[int]
     path_node_count: int
     execution_time_ms: float
+
+
+class BlockedEdge(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    source: int
+    target: int
+
+
+class SolveRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    warehouse: str = "Sukomoro"
+    destinations: list[str] = Field(default_factory=lambda: ["Nganjuk", "Rejoso", "Gondang"], min_length=1, max_length=3)
+    heuristic: Literal["mst", "zero"] = "mst"
+    compare_baseline: bool = True
+    blocked_edges: list[BlockedEdge] = Field(default_factory=list, max_length=20)

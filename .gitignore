@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .env
+.venv/
+.local/
 __pycache__/
 *.py[cod]
 backend/data/raw/osmnx-cache/

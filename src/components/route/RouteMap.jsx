@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import L from 'leaflet';
-import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
+import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Icon from '../common/Icon.jsx';
 
@@ -53,8 +53,9 @@ function MapLoading({ error }) {
   </div>;
 }
 
-export default function RouteMap({ locations, optimal, loading = false, error = '' }) {
+export default function RouteMap({ locations, optimal, currentStep, loading = false, error = '' }) {
   const [mapReady, setMapReady] = useState(false);
+  const [tileError, setTileError] = useState(false);
   const warehouse = locations?.warehouse;
   const destinations = locations?.destinations ?? [];
   const routeCoordinates = useMemo(
@@ -85,6 +86,7 @@ export default function RouteMap({ locations, optimal, loading = false, error = 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={19}
+          eventHandlers={{ tileerror: () => setTileError(true) }}
         />
         <FitMapToData boundsPoints={boundsPoints}/>
         <MapControls boundsPoints={boundsPoints}/>
@@ -102,6 +104,7 @@ export default function RouteMap({ locations, optimal, loading = false, error = 
           positions={routeCoordinates}
           pathOptions={{ color: '#15803d', weight: 5, opacity: 0.92, lineCap: 'round', lineJoin: 'round' }}
         />}
+        {currentStep && <CircleMarker center={[currentStep.latitude, currentStep.longitude]} radius={8} pathOptions={{ color: '#92400e', fillColor: '#fbbf24', fillOpacity: 1, weight: 2 }}><Popup>Ekspansi {currentStep.step} · node {currentStep.node} · mask {currentStep.mask}</Popup></CircleMarker>}
       </MapContainer> : <MapLoading error={mapError || (!loading && Boolean(error))}/>}
 
       {initialCenter && <>
@@ -109,6 +112,7 @@ export default function RouteMap({ locations, optimal, loading = false, error = 
         <div className="map-total"><Icon name="route" size={15}/><strong>{optimal ? `${(optimal.total_distance_m / 1000).toFixed(3)} km Total` : 'Rute belum tersedia'}</strong><span/>{optimal?.path_coordinates?.length ? 'Geometry jalan OSM' : 'Menunggu geometry rute'}</div>
         <div className="map-legend"><strong>LEGENDA PETA</strong><div><i className="legend-depot"/>Warehouse</div><div><i className="legend-destination"/>Destination</div><div><i className="legend-route"/>Rute optimal • OSM</div></div>
         {optimal && optimal.path_coordinates?.length < 2 && <div className="map-geometry-error" role="alert">Geometry rute belum tersedia dari backend.</div>}
+        {tileError && <div className="map-tile-notice" role="status">Peta dasar belum termuat. Perhitungan graf dan garis rute tetap berasal dari data lokal.</div>}
       </>}
       {!mapReady && initialCenter && <div className="map-init-status" role="status">Memuat OpenStreetMap…</div>}
     </div>

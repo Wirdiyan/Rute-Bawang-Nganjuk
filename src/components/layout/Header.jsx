@@ -9,7 +9,7 @@ export default function Header({ activeTab, onNavigate, menuOpen, onToggleMenu, 
 
   return <header className="site-header">
     <div className="header-inner">
-      <button className="mobile-menu icon-button" onClick={onToggleMenu} aria-label="Buka navigasi"><Icon name="menu" /></button>
+      <button className="mobile-menu icon-button" onClick={onToggleMenu} aria-label="Buka navigasi" aria-expanded={menuOpen}><Icon name="menu" /></button>
       <a className="brand" href="#top" onClick={(event) => { event.preventDefault(); onNavigate('dashboard', 'top'); }}>
         <span className="brand-mark"><Icon name="onion" size={21} strokeWidth={1.65} /></span>
         <span className="brand-copy"><strong>RouteBawang AI</strong><small>OPTIMASI DISTRIBUSI BAWANG MERAH</small></span>
@@ -20,7 +20,6 @@ export default function Header({ activeTab, onNavigate, menuOpen, onToggleMenu, 
       </nav>
       <div className="header-actions">
         <div className={`session-pill api-session ${apiStatus}`} title={`Backend status: ${apiStatus}`}><span className="live-dot"/><span>{apiStatus === 'connected' ? 'Backend Connected' : apiStatus === 'offline' ? 'Backend Offline' : 'Connecting API…'}</span></div>
-        <button className="profile-button" aria-label="Profil pengguna"><Icon name="user" size={17} /></button>
       </div>
     </div>
   </header>;

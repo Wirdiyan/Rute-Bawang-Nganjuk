@@ -1,22 +1,23 @@
-import Icon from '../common/Icon.jsx';
+import { useMemo } from 'react';
+import { replayTrace, visitedNames } from '../../api/adapters/searchTrace.js';
+import { formatKm } from '../../api/adapters/routeData.js';
 
-function TokenList({ items, tone }) { return <div className="token-list">{items.map((item, index) => <span className={`node-token ${tone}`} key={`${item}-${index}`}>{item}</span>)}</div>; }
-
-const formatKm = (meters) => `${(meters / 1000).toFixed(3)} km`;
-
-export default function AStarVisualization({ result }) {
-  const steps = result?.search_steps ?? [];
-  const current = steps.at(-1);
-  const openNodes = (result?.open_nodes ?? []).slice(0, 8).map((node) => `#${node}`);
-  const closedNodes = steps.slice(-8).map((step) => `#${step.node}`);
-  return <section className="panel astar-panel">
-    <div className="section-heading"><div><div className="heading-title"><Icon name="nodes" size={18} className="violet-icon"/><h2>Status Eksplorasi A* Terakhir</h2></div><p>{result ? `${result.from} → ${result.to} • trace dari backend` : 'Menunggu trace pencarian dari backend'}</p></div><span className="search-status">{result ? 'PENCARIAN SELESAI' : 'MENUNGGU API'}</span></div>
-    <div className="search-overview">
-      <div className="overview-box"><label>ITERASI AKTIF</label><strong>{current ? `Iterasi ${current.step} (Goal reached)` : '—'}</strong><small>{current ? `Node Saat Ini: ${current.node}` : 'Node saat ini belum tersedia'}</small></div>
-      <div className="overview-box cost-box"><label>EVALUASI FUNGSI BIAYA</label><strong>g(n): {current ? formatKm(current.g) : '—'} + h(n): {current ? formatKm(current.h) : '—'} = <b>{current ? formatKm(current.f) : '—'}</b></strong><small>{current ? `f(n) pada node ${current.node}` : 'Menunggu hasil A*'}</small></div>
-    </div>
-    <div className="set-section"><div className="set-heading"><label>OPEN SET (KANDIDAT TERSISA)</label><span>{result?.open_nodes?.length ?? 0} Node{openNodes.length < (result?.open_nodes?.length ?? 0) ? ` • ${openNodes.length} ditampilkan` : ''}</span></div><TokenList items={openNodes} tone="open"/>{result && !openNodes.length && <small className="empty-data">Tidak ada kandidat tersisa saat pencarian selesai.</small>}</div>
-    <div className="set-section closed-section"><div className="set-heading"><label>CLOSED SET (NODE TEREVALUASI)</label><span>{result?.closed_nodes?.length ?? 0} Node{closedNodes.length < (result?.closed_nodes?.length ?? 0) ? ` • ${closedNodes.length} terakhir ditampilkan` : ''}</span></div><TokenList items={closedNodes} tone="closed"/></div>
-    <div className="admissible-note"><Icon name="info" size={14}/><span>Trace memuat <b>{result?.evaluated_nodes ?? 0}</b> node yang dievaluasi oleh custom A*.</span><strong>Backend A*</strong></div>
+export default function AStarVisualization({ result, cursor, onCursor, playing, onPlaying, speed, onSpeed }) {
+  const trace = result?.trace ?? [];
+  const step = trace[cursor];
+  const snapshot = useMemo(() => replayTrace(trace, result?.initial_state, cursor), [trace, result, cursor]);
+  const names = result?.request.destinations ?? [];
+  return <section className="panel astar-panel" aria-label="Pemutaran pencarian A-star">
+    <div className="section-heading"><div><h2>Proses A* multi-tujuan</h2><p>OPEN dan CLOSED setelah ekspansi yang dipilih.</p></div><span className="search-status">{step?.status === 'goal' ? 'GOAL' : step ? 'REPLAY' : 'BELUM DIHITUNG'}</span></div>
+    {!result ? <p className="empty-data">Hitung rute untuk memutar proses pencarian seluruh perjalanan.</p> : <>
+      <div className="trace-controls"><button onClick={() => onCursor(0)} disabled={cursor === 0} aria-label="Langkah pertama">Awal</button><button onClick={() => onCursor(cursor - 1)} disabled={cursor === 0} aria-label="Langkah sebelumnya">←</button><button onClick={onPlaying} aria-pressed={playing}>{playing ? 'Jeda' : 'Putar'}</button><button onClick={() => onCursor(cursor + 1)} disabled={cursor >= trace.length - 1} aria-label="Langkah berikutnya">→</button><button onClick={() => onCursor(trace.length - 1)} disabled={cursor >= trace.length - 1}>Goal</button></div>
+      <label className="trace-range">Langkah {step.step.toLocaleString('id-ID')} / {trace.length.toLocaleString('id-ID')}<input type="range" min="0" max={trace.length - 1} value={cursor} onChange={(event) => onCursor(Number(event.target.value))} aria-label="Langkah pencarian"/></label>
+      <label className="trace-speed">Kecepatan pemutaran<select value={speed} onChange={(event) => onSpeed(Number(event.target.value))}><option value="1">1 langkah / jeda</option><option value="25">25 langkah / jeda</option><option value="250">250 langkah / jeda</option><option value="1000">1.000 langkah / jeda</option></select></label>
+      <div className="search-overview"><div className="overview-box"><label>STATE TERPILIH</label><strong>Node {step.node}</strong><small>Mask {step.mask.toString(2).padStart(names.length, '0')} · {visitedNames(step.mask, names).join(', ') || 'belum ada tujuan tercapai'}</small></div><div className="overview-box"><label>BIAYA STATE</label><strong>f = {formatKm(step.f)}</strong><small>g {formatKm(step.g)} + h {formatKm(step.h)}</small></div></div>
+      <p className="trace-parent">Parent: {step.parent ?? '— (state awal)'} · tersisa: {names.filter((_, index) => !(step.mask & (1 << index))).join(', ') || (step.status === 'goal' ? 'selesai' : 'kembali ke gudang')}</p>
+      <div className="set-section"><div className="set-heading"><label>OPEN · KANDIDAT</label><span>{snapshot.openCount.toLocaleString('id-ID')} state</span></div><div className="token-list">{snapshot.open.map((state) => <span className="node-token open" key={state.key}>#{state.node} / {state.mask.toString(2).padStart(names.length, '0')} · f {(state.f / 1000).toFixed(2)}</span>)}</div><small className="config-intro">Maksimal 8 kandidat dengan f terkecil ditampilkan.</small></div>
+      <div className="set-section"><div className="set-heading"><label>CLOSED · SUDAH DIEKSPANSI</label><span>{snapshot.closedCount.toLocaleString('id-ID')} state</span></div><div className="token-list">{snapshot.closed.map((state) => <span className="node-token closed" key={state.key}>#{state.node} / {state.mask.toString(2).padStart(names.length, '0')}</span>)}</div><small className="config-intro">8 state terakhir; state boleh dibuka kembali jika g membaik.</small></div>
+      <p className="config-intro">Digit mask mengikuti urutan input dari kanan ke kiri: {names.join(', ')}. Angka biaya dalam km. Lingkaran pada peta menandai node ekspansi terpilih.</p>
+    </>}
   </section>;
 }

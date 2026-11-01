@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from itertools import permutations
+from math import factorial
 from time import perf_counter
 from typing import Any, Hashable
 
@@ -22,6 +23,8 @@ def optimize_route(
     distances; no route-search algorithm other than the existing A* is added.
     Exact distance ties are broken lexicographically by destination names.
     """
+    if not 1 <= len(destinations) <= 6:
+        raise ValueError("Baseline supports 1–6 destinations.")
     warehouse_name = str(warehouse["name"])
     locations = [warehouse, *destinations]
     names = [str(location["name"]) for location in locations]
@@ -57,9 +60,9 @@ def optimize_route(
     candidate_orders: list[tuple[str, ...]] = list(
         permutations(str(location["name"]) for location in destinations)
     )
-    if len(candidate_orders) != 6:
+    if len(candidate_orders) != factorial(len(destinations)):
         raise ValueError(
-            f"Expected 6 candidate routes for 3 destinations; got {len(candidate_orders)}"
+            f"Unexpected number of candidate routes: {len(candidate_orders)}"
         )
 
     candidates: list[dict[str, Any]] = []

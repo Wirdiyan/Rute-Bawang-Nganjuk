@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from '../components/layout/Header.jsx';
 import RouteConfiguration from '../components/route/RouteConfiguration.jsx';
 import RouteMap from '../components/route/RouteMap.jsx';
@@ -8,91 +8,113 @@ import AlternativeRoutes from '../components/route/AlternativeRoutes.jsx';
 import WhyOptimal from '../components/route/WhyOptimal.jsx';
 import AStarVisualization from '../components/astar/AStarVisualization.jsx';
 import SearchTable from '../components/astar/SearchTable.jsx';
-import Icon from '../components/common/Icon.jsx';
-import {
-  createAlternativeRows,
-  createOptimalExplanation,
-  createRouteStops,
-  createSearchRows,
-  createSummaryStats,
-} from '../api/adapters/routeData.js';
-import {
-  getAStar,
-  getAlternativeRoutes,
-  getHealth,
-  getLocations,
-  getOptimization,
-  getOptimalRoute,
-} from '../api/routeApi.js';
+import { createAlternativeRows, createOptimalExplanation, createRouteStops, createSearchRows, createSummaryStats } from '../api/adapters/routeData.js';
+import { getDataset, solveRoute } from '../api/routeApi.js';
 
 export default function Dashboard() {
-  const [data, setData] = useState(null);
+  const [dataset, setDataset] = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [heuristic, setHeuristic] = useState('mst');
+  const [compare, setCompare] = useState(true);
+  const [blocked, setBlocked] = useState([]);
+  const [closureEdge, setClosureEdge] = useState(null);
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [resultReady, setResultReady] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [dirty, setDirty] = useState(true);
   const [error, setError] = useState('');
   const [apiStatus, setApiStatus] = useState('checking');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [menuOpen, setMenuOpen] = useState(false);
   const [filter, setFilter] = useState('');
-
-  const loadDashboardData = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true);
-    else setLoading(true);
-    setResultReady(false);
-    try {
-      const [health, locations, optimization, optimal, alternatives] = await Promise.all([
-        getHealth(), getLocations(), getOptimization(), getOptimalRoute(), getAlternativeRoutes(),
-      ]);
-      if (health.status !== 'ok') throw new Error('FastAPI merespons, tetapi health check menyatakan service tidak siap.');
-      if (optimization.total_distance_m !== optimal.total_distance_m || optimization.optimal_route.join('|') !== optimal.route.join('|')) {
-        throw new Error('Hasil endpoint optimasi tidak konsisten dengan detail rute optimal.');
-      }
-      const firstLeg = optimal.route?.[1];
-      const astar = firstLeg ? await getAStar(optimal.route[0], firstLeg) : null;
-      setData({ health, locations, optimization, optimal, alternatives, astar });
-      setApiStatus('connected');
-      setError('');
-      setResultReady(true);
-    } catch (requestError) {
-      setApiStatus('offline');
-      setError(requestError instanceof Error ? requestError.message : 'Gagal memuat data dari backend RouteBawang AI.');
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+  const [cursor, setCursor] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState(250);
+  const request = useRef(null);
+  const errorBox = useRef(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    getDataset(controller.signal).then((data) => {
+      setDataset(data); setSelected(data.locations.slice(1).map((point) => point.name));
+      setApiStatus('connected'); setLoading(false);
+    }).catch((cause) => {
+      if (cause.name !== 'AbortError') { setError(cause.message); setApiStatus('offline'); setLoading(false); }
+    });
+    return () => { controller.abort(); request.current?.abort(); };
   }, []);
+  useEffect(() => {
+    if (!playing || !result) return undefined;
+    const timer = window.setInterval(() => setCursor((value) => Math.min(value + speed, result.trace.length - 1)), 500);
+    return () => window.clearInterval(timer);
+  }, [playing, speed, result]);
+  useEffect(() => { if (result && cursor >= result.trace.length - 1) setPlaying(false); }, [cursor, result]);
+  useEffect(() => { if (error) errorBox.current?.focus(); }, [error]);
 
-  useEffect(() => { loadDashboardData(); }, [loadDashboardData]);
-
-  const stats = useMemo(() => createSummaryStats(data?.optimal, data?.locations, data?.astar), [data]);
-  const stops = useMemo(() => createRouteStops(data?.optimal), [data]);
-  const alternativeRows = useMemo(() => createAlternativeRows(data?.alternatives), [data]);
-  const searchRows = useMemo(() => createSearchRows(data?.astar), [data]);
-  const visibleRows = useMemo(() => searchRows.filter((row) => `${row.node} ${row.status} ${row.iteration}`.toLowerCase().includes(filter.toLowerCase())), [searchRows, filter]);
-  const explanation = useMemo(() => createOptimalExplanation(data?.optimal, data?.alternatives), [data]);
-
-  const navigate = (tab, target) => {
-    setActiveTab(tab);
-    setMenuOpen(false);
-    document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const change = (setter, value) => { setter(value); setDirty(true); setPlaying(false); setError(''); };
+  const toggleDestination = (name) => change(setSelected, selected.includes(name) ? selected.filter((value) => value !== name) : [...selected, name]);
+  const compute = async () => {
+    if (busy || !selected.length || !dataset) return;
+    setBusy(true); setPlaying(false); setError('');
+    request.current = new AbortController();
+    try {
+      const fresh = await solveRoute({ warehouse: dataset.locations[0].name, destinations: selected,
+        heuristic, compare_baseline: compare, blocked_edges: blocked }, request.current.signal);
+      setResult(fresh); setCursor(0); setFilter(''); setDirty(false); setApiStatus('connected');
+      if (!blocked.length) setClosureEdge({ source: fresh.combined_path[0], target: fresh.combined_path[1] });
+    } catch (cause) {
+      if (cause.name !== 'AbortError') { setError(cause.message); setDirty(true); }
+    } finally { setBusy(false); }
   };
-  const refresh = () => loadDashboardData(true);
-
+  const locations = useMemo(() => {
+    if (!dataset) return null;
+    const points = dataset.locations.map((point) => ({ ...point, latitude: point.road_latitude, longitude: point.road_longitude }));
+    const names = result?.request.destinations ?? selected;
+    return { warehouse: points[0], destinations: points.slice(1).filter((point) => names.includes(point.name)) };
+  }, [dataset, selected, result]);
+  const stats = useMemo(() => createSummaryStats(result), [result]);
+  const edgeOptions = useMemo(() => {
+    const unique = new Map();
+    (result?.combined_path ?? []).slice(1).forEach((target, index) => {
+      const source = result.combined_path[index];
+      unique.set(`${source}:${target}`, { source, target, label: `Ruas ${index + 1} · ${source} → ${target}` });
+    });
+    if (closureEdge && !unique.has(`${closureEdge.source}:${closureEdge.target}`)) unique.set(`${closureEdge.source}:${closureEdge.target}`, { ...closureEdge, label: 'Ruas dari skenario sebelumnya' });
+    return [...unique.values()];
+  }, [result, closureEdge]);
+  const chooseClosure = (key) => {
+    const { source, target } = edgeOptions.find((edge) => `${edge.source}:${edge.target}` === key);
+    setClosureEdge({ source, target });
+    if (blocked.length) change(setBlocked, [{ source, target }]);
+  };
+  const stops = useMemo(() => createRouteStops(result), [result]);
+  const alternatives = useMemo(() => createAlternativeRows(result), [result]);
+  const rows = useMemo(() => createSearchRows(result), [result]);
+  const visibleRows = useMemo(() => rows.filter((row) => `${row.node} ${row.status} ${row.iteration} ${row.mask}`.toLowerCase().includes(filter.toLowerCase())), [rows, filter]);
+  const navigate = (tab, target) => { setActiveTab(tab); setMenuOpen(false); document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  const download = () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }));
+    const link = document.createElement('a'); link.href = url; link.download = `rute-simulasi-${result.run_id}.json`; link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  const selectStep = (index) => { setCursor(index); setPlaying(false); };
   return <div className="app-shell" id="top">
+    <a href="#workbench" className="skip-link">Lewati ke konfigurasi</a>
     <Header activeTab={activeTab} onNavigate={navigate} menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} apiStatus={apiStatus}/>
     <main className="dashboard-content">
-      <section className="page-intro"><div><div className="intro-kicker"><span>LIVE API DATA</span><small>Graf Jaringan Jalan Riil Kab. Nganjuk</small></div><h1>Workbench Optimasi Distribusi Bawang Merah</h1></div><div className="intro-actions"><div className="solver-chip"><Icon name="filter" size={14}/><span>Optimasi Rute: <b>Custom A* + Evaluasi 6 Urutan</b></span></div><button className="reset-button" onClick={refresh} disabled={loading || refreshing}><Icon name="refresh" size={13}/> {refreshing ? 'Memuat…' : 'Muat Ulang Data'}</button></div></section>
-      {error && <div className="api-error" role="alert"><Icon name="info" size={16}/><div><strong>Data backend tidak tersedia</strong><span>{error}</span></div><button onClick={refresh} disabled={refreshing}>Coba lagi</button></div>}
-      {loading && <div className="api-loading" role="status"><span className="spinner dark-spinner"/> Menghubungkan ke FastAPI dan memuat hasil optimasi…</div>}
-      <section className="workbench-grid"><RouteConfiguration locations={data?.locations} onOptimize={refresh} optimizing={refreshing} resultReady={resultReady}/><RouteMap locations={data?.locations} optimal={data?.optimal} loading={loading} error={error}/></section>
+      <section className="page-intro"><div><div className="intro-kicker"><span>SIMULASI DISTRIBUSI</span><small>Jaringan jalan OpenStreetMap · Nganjuk</small></div><h1>Optimasi perjalanan multi-tujuan</h1></div><div className="intro-actions"><span className="solver-chip">A* · state posisi dan tujuan dikunjungi</span><button className="reset-button" disabled={!result || busy} onClick={download}>Unduh hasil JSON</button></div></section>
+      <div className="simulation-notice"><strong>Titik referensi, bukan lokasi pengiriman terverifikasi.</strong> {dataset?.notice ?? 'Memuat dataset jalan lokal…'}</div>
+      {loading && <p className="api-loading" role="status">Memeriksa dataset jalan…</p>}
+      {error && <div className="api-error" role="alert" tabIndex="-1" ref={errorBox}><strong>Permintaan belum berhasil</strong><span>{error}</span>{!dataset && <button onClick={() => window.location.reload()}>Muat ulang</button>}</div>}
+      {result && dirty && <p className="stale-notice" role="status">Konfigurasi berubah. Peta dan tabel masih menampilkan hasil perhitungan sebelumnya sampai Anda menghitung ulang.</p>}
+      <section className="workbench-grid" id="workbench"><RouteConfiguration dataset={dataset} selected={selected} onSelect={toggleDestination} heuristic={heuristic} onHeuristic={(value) => change(setHeuristic, value)} compare={compare} onCompare={(value) => change(setCompare, value)} blocked={blocked} onBlock={(checked) => change(setBlocked, checked ? [closureEdge] : [])} edgeOptions={edgeOptions} closureEdge={closureEdge} onClosureEdge={chooseClosure} canBlock={Boolean(result?.combined_path?.length > 1)} onOptimize={compute} busy={busy} dirty={dirty}/><RouteMap locations={locations} optimal={result} currentStep={result?.trace[cursor]} loading={loading} error={error}/></section>
+      {result && <p className="run-metadata" role="status">Perhitungan baru · {new Date(result.computed_at_utc).toLocaleString('id-ID')} · ID {result.run_id.slice(0, 8)} · Dataset {result.dataset.version}{result.request.blocked_edges.length ? ` · ${result.request.blocked_edges.length} ruas berarah ditutup` : ''}</p>}
       <RouteSummary stats={stats}/>
       <div className="detail-grid">
-        <div className="detail-column"><RoutePlan stops={stops}/><AlternativeRoutes routes={alternativeRows} count={data?.alternatives?.count ?? 0}/><WhyOptimal explanation={explanation}/></div>
-        <div className="detail-column"><AStarVisualization result={data?.astar}/><div className="ledger-tools"><div><Icon name="search" size={15}/><input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Cari simpul atau status…" aria-label="Cari pada log ekspansi"/></div><button onClick={() => setFilter('')}>Reset filter</button></div><SearchTable rows={visibleRows}/></div>
+        <div className="detail-column"><RoutePlan stops={stops}/><AlternativeRoutes routes={alternatives} count={alternatives.length} enabled={result?.comparison.enabled}/><WhyOptimal explanation={createOptimalExplanation(result)}/></div>
+        <div className="detail-column"><AStarVisualization result={result} cursor={cursor} onCursor={selectStep} playing={playing} onPlaying={() => { if (cursor === result.trace.length - 1) setCursor(0); setPlaying((value) => !value); }} speed={speed} onSpeed={setSpeed}/><div className="ledger-tools"><input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Cari node, langkah, atau mask…" aria-label="Cari pada log ekspansi"/><button onClick={() => setFilter('')}>Reset filter</button></div><SearchTable key={result?.run_id ?? 'empty'} rows={visibleRows} cursor={cursor} onSelect={selectStep}/></div>
       </div>
     </main>
-    <footer className="site-footer"><span>© 2025 RouteBawang AI • Kabupaten Nganjuk Agro-Logistics Optimization System</span><div><span className="engine-pill"><i/> Custom A* • Optimasi Multi-Destinasi v1.0</span><strong className={`footer-api-status ${apiStatus}`}>Backend: {apiStatus === 'connected' ? 'Connected' : apiStatus === 'offline' ? 'Offline' : 'Checking'}</strong></div></footer>
-    {refreshing && <div className="loading-toast" role="status"><span className="spinner"/> Memuat ulang data hasil backend…</div>}
+    <footer className="site-footer"><span>RouteBawang · Simulasi akademik A* multi-tujuan</span><span>Graf OSM lokal · Tanpa lalu lintas waktu nyata</span></footer>
+    {busy && <div className="loading-toast" role="status"><span className="spinner"/> Menghitung ulang, memeriksa baseline, dan menyiapkan trace…</div>}
   </div>;
 }

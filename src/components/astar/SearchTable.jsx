@@ -1,11 +1,14 @@
 import { useState } from 'react';
 
-export default function SearchTable({ rows = [] }) {
-  const [showAll, setShowAll] = useState(false);
-  const visibleRows = showAll ? rows : rows.slice(0, 25);
+export default function SearchTable({ rows = [], cursor, onSelect }) {
+  const [page, setPage] = useState(0);
+  const pages = Math.max(1, Math.ceil(rows.length / 25));
+  const active = Math.min(page, pages - 1);
+  const visible = rows.slice(active * 25, active * 25 + 25);
   return <section className="panel ledger-panel">
-    <div className="section-heading ledger-heading"><div><h2>A* Node Expansion Ledger</h2><p>Trace evaluasi node dari custom A* backend</p></div><span className="log-badge">{rows.length} Steps</span></div>
-    <div className="table-scroll"><table><thead><tr><th>ITER</th><th>SIMPUL TERPILIH (N)</th><th>G(N) RIIL</th><th>H(N) EST</th><th>F(N) TOTAL</th><th>STATUS NODE</th></tr></thead><tbody>{visibleRows.map((row) => <tr key={`${row.iteration}-${row.node}`}><td>{row.iteration}</td><td className={row.status === 'Goal reached' ? 'node-start' : ''}>{row.node}</td><td>{row.g}</td><td>{row.h}</td><td className={row.status === 'Goal reached' ? 'goal-cost' : ''}>{row.f}</td><td><span className={`node-status ${row.tone}`}>{row.status}</span></td></tr>)}</tbody></table></div>
-    <div className="table-footnote"><span><i/> {rows.length ? `${showAll ? rows.length : Math.min(rows.length, 25)} dari ${rows.length} langkah pencarian` : 'Search trace belum tersedia'}</span>{rows.length > 25 && <button onClick={() => setShowAll((value) => !value)}><span>{showAll ? '⌃' : '⌄'}</span> {showAll ? 'Ringkas log' : 'Lihat log lengkap'}</button>}</div>
+    <div className="section-heading ledger-heading"><div><h2>Log ekspansi state</h2><p>Pilih langkah untuk melihat OPEN, CLOSED, dan posisi pada peta.</p></div><span className="log-badge">{rows.length.toLocaleString('id-ID')} langkah</span></div>
+    <div className="table-scroll"><table><thead><tr><th>LANGKAH</th><th>NODE / MASK</th><th>g</th><th>h</th><th>f</th><th>STATUS</th></tr></thead><tbody>{visible.map((row) => <tr key={`${row.index}-${row.key}`} className={cursor === row.index ? 'trace-selected' : ''}><td><button className="step-link" onClick={() => onSelect(row.index)} aria-label={`Lihat langkah ${row.iteration}`}>{row.iteration}</button></td><td>{row.node}<small className="mask-cell">mask {row.mask.toString(2)}</small></td><td>{row.g}</td><td>{row.h}</td><td>{row.f}</td><td>{row.status}</td></tr>)}</tbody></table></div>
+    {!rows.length && <p className="empty-data">Belum ada langkah yang sesuai.</p>}
+    <div className="table-footnote"><span>Halaman {active + 1} / {pages.toLocaleString('id-ID')} · 25 baris per halaman</span><div className="pagination"><button onClick={() => setPage(Math.max(0, active - 1))} disabled={!active}>Sebelumnya</button><button onClick={() => setPage(active + 1)} disabled={active >= pages - 1}>Berikutnya</button></div></div>
   </section>;
 }

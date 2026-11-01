@@ -28,6 +28,8 @@ def haversine_m(graph: nx.Graph, node: Hashable, goal: Hashable) -> float:
         raise AStarError(f"Node {node!r} or goal {goal!r} has invalid x/y coordinates") from exc
     if not all(map(math.isfinite, (lat1, lon1, lat2, lon2))):
         raise AStarError(f"Node {node!r} or goal {goal!r} has non-finite coordinates")
+    if not (-90 <= lat1 <= 90 and -90 <= lat2 <= 90 and -180 <= lon1 <= 180 and -180 <= lon2 <= 180):
+        raise AStarError("Node coordinates fall outside valid latitude/longitude ranges")
 
     radius_m = 6_371_000.0
     phi1, phi2 = math.radians(lat1), math.radians(lat2)
@@ -48,8 +50,8 @@ def _validate_graph(graph: nx.Graph) -> None:
             length = float(raw_length)
         except (TypeError, ValueError) as exc:
             raise AStarError(f"Edge {source!r} → {target!r} has missing/non-numeric length") from exc
-        if not math.isfinite(length) or length <= 0:
-            raise AStarError(f"Edge {source!r} → {target!r} must have a finite positive length")
+        if not math.isfinite(length) or length < 0:
+            raise AStarError(f"Edge {source!r} → {target!r} must have a finite nonnegative length")
 
 
 def _edge_length(graph: nx.Graph, source: Hashable, target: Hashable) -> float:
@@ -127,10 +129,9 @@ def astar_search(
             }
 
         for neighbor in graph.successors(current):
-            if neighbor in closed:
-                continue
             tentative_g = current_g + _edge_length(graph, current, neighbor)
             if tentative_g < g_score.get(neighbor, math.inf):
+                closed.discard(neighbor)
                 came_from[neighbor] = current
                 g_score[neighbor] = tentative_g
                 h_score = haversine_m(graph, neighbor, goal_node)
