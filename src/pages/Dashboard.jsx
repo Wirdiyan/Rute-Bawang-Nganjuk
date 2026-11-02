@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from '../components/layout/Header.jsx';
+import Icon from '../components/common/Icon.jsx';
 import RouteConfiguration from '../components/route/RouteConfiguration.jsx';
 import RouteMap from '../components/route/RouteMap.jsx';
 import WholeNodeJourney from '../components/route/WholeNodeJourney.jsx';
@@ -91,7 +92,16 @@ export default function Dashboard() {
   const alternatives = useMemo(() => createAlternativeRows(result), [result]);
   const rows = useMemo(() => createSearchRows(result), [result]);
   const visibleRows = useMemo(() => rows.filter((row) => `${row.node} ${row.status} ${row.iteration} ${row.mask}`.toLowerCase().includes(filter.toLowerCase())), [rows, filter]);
-  const navigate = (tab, target) => { setActiveTab(tab); setMenuOpen(false); document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  const navigate = (tab, target) => {
+    setActiveTab(tab); setMenuOpen(false);
+    const section = document.getElementById(target);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    section?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    if (menuOpen && section) {
+      section.setAttribute('tabindex', '-1');
+      section.focus({ preventScroll: true });
+    }
+  };
   const download = () => {
     const url = URL.createObjectURL(new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }));
     const link = document.createElement('a'); link.href = url; link.download = `rute-simulasi-${result.run_id}.json`; link.click();
@@ -102,21 +112,22 @@ export default function Dashboard() {
     <a href="#workbench" className="skip-link">Lewati ke konfigurasi</a>
     <Header activeTab={activeTab} onNavigate={navigate} menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} apiStatus={apiStatus}/>
     <main className="dashboard-content">
-      <section className="page-intro"><div><div className="intro-kicker"><span>SIMULASI DISTRIBUSI</span><small>Jaringan jalan OpenStreetMap · Nganjuk</small></div><h1>Optimasi perjalanan multi-tujuan</h1></div><div className="intro-actions"><span className="solver-chip">A* · state posisi dan tujuan dikunjungi</span><button className="reset-button" disabled={!result || busy} onClick={download}>Unduh hasil JSON</button></div></section>
-      <div className="simulation-notice"><strong>Titik referensi, bukan lokasi pengiriman terverifikasi.</strong> {dataset?.notice ?? 'Memuat dataset jalan lokal…'}</div>
+      <section className="page-intro"><div><div className="intro-kicker"><span>PRAKTIKUM A*</span><small>Kabupaten Nganjuk</small></div><h1>Simulasi rute distribusi</h1><p className="page-lead">Atur tujuan, pelajari pilihan jalur, lalu ikuti satu perjalanan penuh.</p></div><div className="intro-actions"><button className="reset-button" disabled={!result || busy} onClick={download}><Icon name="route" size={16}/> Unduh hasil JSON</button></div></section>
+      <aside className="simulation-notice" aria-label="Informasi dataset"><Icon name="info" size={19}/><div><strong>Menggunakan titik referensi simulasi</strong><p>Gudang dan penerima belum menjadi lokasi pengiriman terverifikasi.</p><details><summary>Detail sumber dan batasan data</summary><p>{dataset?.notice ?? 'Memuat dataset jalan lokal…'}</p></details></div><span className="dataset-region">NGANJUK, JAWA TIMUR</span></aside>
       {loading && <p className="api-loading" role="status">Memeriksa dataset jalan…</p>}
       {error && <div className="api-error" role="alert" tabIndex="-1" ref={errorBox}><strong>Permintaan belum berhasil</strong><span>{error}</span>{!dataset && <button onClick={() => window.location.reload()}>Muat ulang</button>}</div>}
       {result && dirty && <p className="stale-notice" role="status">Konfigurasi berubah. Peta dan tabel masih menampilkan hasil perhitungan sebelumnya sampai Anda menghitung ulang.</p>}
       <section className="workbench-grid" id="workbench"><RouteConfiguration dataset={dataset} selected={selected} onSelect={toggleDestination} heuristic={heuristic} onHeuristic={(value) => change(setHeuristic, value)} compare={compare} onCompare={(value) => change(setCompare, value)} blocked={blocked} onBlock={(checked) => change(setBlocked, checked ? [closureEdge] : [])} edgeOptions={edgeOptions} closureEdge={closureEdge} onClosureEdge={chooseClosure} canBlock={Boolean(result?.combined_path?.length > 1)} onOptimize={compute} busy={busy} dirty={dirty}/><RouteMap locations={locations} optimal={result} currentStep={result?.trace[cursor]} loading={loading} error={error} busy={busy} dirty={dirty}/></section>
       {result && <p className="run-metadata" role="status">Perhitungan baru · {new Date(result.computed_at_utc).toLocaleString('id-ID')} · ID {result.run_id.slice(0, 8)} · Dataset {result.dataset.version}{result.request.blocked_edges.length ? ` · ${result.request.blocked_edges.length} ruas berarah ditutup` : ''}</p>}
-      <WholeNodeJourney optimal={result} locations={locations} busy={busy} dirty={dirty}/>
       <RouteSummary stats={stats}/>
+      <div id="whole-simulation"><WholeNodeJourney optimal={result} locations={locations} busy={busy} dirty={dirty}/></div>
+      <div className="stage-heading"><span className="stage-index">03</span><div><strong>Analisis hasil perjalanan</strong><p>Tinjau urutan kunjungan, pembanding biaya, dan langkah A*.</p></div></div>
       <div className="detail-grid">
         <div className="detail-column"><RoutePlan stops={stops}/><AlternativeRoutes routes={alternatives} count={alternatives.length} enabled={result?.comparison.enabled}/><WhyOptimal explanation={createOptimalExplanation(result)}/></div>
         <div className="detail-column"><AStarVisualization result={result} cursor={cursor} onCursor={selectStep} playing={playing} onPlaying={() => { if (cursor === result.trace.length - 1) setCursor(0); setPlaying((value) => !value); }} speed={speed} onSpeed={setSpeed}/><div className="ledger-tools"><input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Cari node, langkah, atau mask…" aria-label="Cari pada log ekspansi"/><button onClick={() => setFilter('')}>Reset filter</button></div><SearchTable key={result?.run_id ?? 'empty'} rows={visibleRows} cursor={cursor} onSelect={selectStep}/></div>
       </div>
     </main>
-    <footer className="site-footer"><span>RouteBawang · Simulasi akademik A* multi-tujuan</span><span>Graf OSM lokal · Tanpa lalu lintas waktu nyata</span></footer>
+    <footer className="site-footer"><span><strong>SIMANTRI</strong> · Praktikum A* multi-tujuan</span><span>Referensi OpenStreetMap · Nganjuk</span></footer>
     {busy && <div className="loading-toast" role="status"><span className="spinner"/> Menghitung ulang, memeriksa baseline, dan menyiapkan trace…</div>}
   </div>;
 }

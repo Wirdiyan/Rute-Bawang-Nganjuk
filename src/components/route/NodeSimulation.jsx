@@ -32,9 +32,9 @@ export default function NodeSimulation({ optimal, playback, mode, disabled=false
       marker.current.setAttribute('visibility',point?'visible':'hidden');
       if(point)marker.current.setAttribute('transform',`translate(${point.x} ${point.y})`);
     };
-    playback.nodeRendererRef.current=draw;draw(playback.frame);
+    playback.nodeRendererRef.current=draw;draw(playback.getCurrentFrame());
     return ()=>{if(playback.nodeRendererRef.current===draw)playback.nodeRendererRef.current=null;};
-  },[diagram,lesson,mode,playback.nodeRendererRef]);
+  },[diagram,lesson,mode,playback.nodeRendererRef,playback.getCurrentFrame]);
   if(!lesson||!diagram||!snapshot)return <div className="node-empty"><h2>Cari jalan lewat simpang dan permukiman</h2><p>Tekan <strong>Hitung rute</strong> untuk menyiapkan pilihan jalan OSM. Setiap ruas akan menampilkan 2–4 node perantara, lalu jalurnya dipelajari langkah demi langkah.</p></div>;
   const {current,known,open,closed,revealedEdges,revealedNodes}=snapshot;
   const title=node=>`${byId.get(node)?.code??''} · ${byId.get(node)?.name??node}`;

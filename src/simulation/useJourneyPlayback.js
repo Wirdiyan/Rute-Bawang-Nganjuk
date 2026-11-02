@@ -9,6 +9,9 @@ export default function useJourneyPlayback(model, enabled) {
   const markerRef = useRef(null);
   const trailRef = useRef(null);
   const nodeRendererRef = useRef(null);
+  // Register SVG renderers against the current clock after a route reset,
+  // even before React has repainted the corresponding text labels.
+  const getCurrentFrame = useCallback(() => model ? sampleJourney(model, elapsed.current) : null, [model]);
   const draw = useCallback((time, drawTrail = true) => {
     if (!model) return null;
     const frame = sampleJourney(model, time);
@@ -61,5 +64,5 @@ export default function useJourneyPlayback(model, enabled) {
     setPlaying(false); elapsed.current = Math.max(0, Math.min(1, fraction)) * model.totalMs;
     setTimeMs(elapsed.current); draw(elapsed.current);
   };
-  return { playing, speed, setSpeed, timeMs, frame, toggle, reset, seek, markerRef, trailRef, nodeRendererRef };
+  return { playing, speed, setSpeed, timeMs, frame, getCurrentFrame, toggle, reset, seek, markerRef, trailRef, nodeRendererRef };
 }

@@ -26,9 +26,9 @@ export default function WholeNodeJourney({ optimal, locations, busy=false, dirty
       vehicle.current?.setAttribute('transform',`translate(${current.position.x} ${current.position.y})`);
       for(const [edge,progress]of current.progress)trails.current.get(edge)?.setAttribute('stroke-dasharray',`${progress} 1`);
     };
-    playback.nodeRendererRef.current=draw;draw(playback.frame);
+    playback.nodeRendererRef.current=draw;draw(playback.getCurrentFrame());
     return ()=>{if(playback.nodeRendererRef.current===draw)playback.nodeRendererRef.current=null;};
-  },[diagram,playback.nodeRendererRef]);
+  },[diagram,playback.nodeRendererRef,playback.getCurrentFrame]);
   return <section className="whole-node-panel panel" aria-label="Simulasi node perjalanan keseluruhan">
     <div className="whole-node-heading"><div><span className="lesson-kicker">SIMULASI NODE KESELURUHAN</span><h2>Satu perjalanan, kembali ke gudang</h2><p>Seluruh ruas ditampilkan sekaligus. Kendaraan berangkat dari Sukomoro, mengunjungi tujuan sesuai hasil perhitungan, lalu kembali ke node gudang yang sama.</p></div><span className="eyebrow-badge">PULANG–PERGI</span></div>
     {!diagram?<p className="whole-node-empty" role={error?'alert':'status'}>{error||'Tekan Hitung rute di konfigurasi untuk menampilkan siklus lengkap beserta node perantaranya.'}</p>:<>
